@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the software and the accompanying paper."
+title: "Harness-Engineered LLM Agents for Crystal Plasticity Simulation"
+authors:
+  - family-names: "[Last name]"
+    given-names: "[First name]"
+    affiliation: "University of Michigan"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"
+version: "1.0.0"
+date-released: "[YYYY-MM-DD]"
+license: MIT
+repository-code: "[REPO URL]"
+preferred-citation:
+  type: article
+  title: "[PAPER TITLE]"
+  authors:
+    - family-names: "[Last name]"
+      given-names: "[First name]"
+  journal: "[Journal]"
+  year: [year]
+  doi: "[DOI]"

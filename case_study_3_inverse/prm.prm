@@ -1,0 +1,95 @@
+# Listing of Parameters
+# ---------------------
+
+####################################
+# FE parameters
+####################################
+set Order of finite elements                     = 1
+set Order of quadrature                          = 2
+
+####################################
+# Domain parameters
+####################################
+set Number of dimensions                         = 3
+set Domain size X                                = 1.0
+set Domain size Y                                = 1.0
+set Domain size Z                                = 1.0
+
+####################################
+# Mesh parameters
+####################################
+set Subdivisions X                               = 1
+set Subdivisions Y                               = 1
+set Subdivisions Z                               = 1
+set Refine factor                                = 3
+set Write Mesh To EPS                            = false
+
+####################################
+# Solver output parameters
+####################################
+set Write Output                                 = true
+set Output Directory                             = results
+set Skip Output Steps                            = 50
+set Output Equivalent strain                     = true
+set Output Equivalent stress                     = true
+set Output Grain ID                              = true
+set Output Twin fractions                        = false
+set Write Quadrature Output                      = true
+set Skip Quadrature Output Steps                 = 50
+
+####################################
+# Boundary condition information
+####################################
+set Boundary condition filename                  = BCinfo.txt
+set BC file number of header lines               = 2
+set Number of boundary conditions                = 4
+
+####################################
+# Solver parameters
+####################################
+set Time increments                              = 0.01
+set Total time                                   = 5
+set Maximum linear solver iterations             = 50000
+set Relative linear solver tolerance             = 1.0e-10
+set Maximum non linear iterations                = 4
+
+####################################
+# Elasticity parameters  (Cu)
+####################################
+set Elastic Stiffness row 1                      = 170.0e3, 124.0e3, 124.0e3, 0, 0, 0
+set Elastic Stiffness row 2                      = 124.0e3, 170.0e3, 124.0e3, 0, 0, 0
+set Elastic Stiffness row 3                      = 124.0e3, 124.0e3, 170.0e3, 0, 0, 0
+set Elastic Stiffness row 4                      = 0, 0, 0, 75.0e3, 0, 0
+set Elastic Stiffness row 5                      = 0, 0, 0, 0, 75.0e3, 0
+set Elastic Stiffness row 6                      = 0, 0, 0, 0, 0, 75.0e3
+
+####################################
+# Slip parameters
+####################################
+set Number of Slip Systems                       = 12
+set Latent Hardening Ratio filename              = LatentHardeningRatio.txt
+
+set Initial Slip Resistance                      = 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0
+set Initial Hardening Modulus                    = 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0
+set Power Law Exponent                           = 2.25, 2.25, 2.25, 2.25, 2.25, 2.25, 2.25, 2.25, 2.25, 2.25, 2.25, 2.25
+set Saturation Stress                            = 135.0, 135.0, 135.0, 135.0, 135.0, 135.0, 135.0, 135.0, 135.0, 135.0, 135.0, 135.0
+
+set Slip Directions File                         = slipDirections.txt
+set Slip Normals File                            = slipNormals.txt
+
+####################################
+# Constitutive model parameters
+####################################
+set Stress Tolerance                             = 1.0e-9
+set Max Slip Search Iterations                   = 1
+set Max Solver Iterations                        = 1
+
+####################################
+# Input microstructure
+####################################
+set Voxels in X direction                        = 65
+set Voxels in Y direction                        = 65
+set Voxels in Z direction                        = 65
+set Grain ID file name                           = grainID.txt
+set Header Lines GrainID File                    = 5
+set Orientations file name                       = orientations.txt

@@ -1,0 +1,33 @@
+{
+  "source": "PRISMS-Plasticity paper (Yaghoobi et al., Comput. Mater. Sci. 169, 2019), Fig. 10",
+  "description": "Deformed pole figures of polycrystalline Cu after 40% true strain in uniaxial compression. Initial texture input as RANDOM (per the Fig. 10 caption). Colour scale 0 to 2.5 MRD.",
+  "digitized_by": "pixel/colorbar mapping of the rendered figure; values are approximate (+/- ~0.2 MRD)",
+  "scale_MRD_max": 2.5,
+  "pole_figures": {
+    "100": {
+      "peak_MRD": 1.4,
+      "peak_range": [1.3, 1.5],
+      "central": "minimum",
+      "central_MRD": 0.35,
+      "pattern": "four-fold ring of intensity at intermediate radius; depleted centre"
+    },
+    "110": {
+      "peak_MRD": 2.4,
+      "peak_range": [2.3, 2.5],
+      "central": "maximum",
+      "pattern": "strong central maximum = <110> compression fibre aligned with the compression axis; this is the primary target feature"
+    },
+    "111": {
+      "peak_MRD": 1.9,
+      "peak_range": [1.8, 2.0],
+      "central": "minimum",
+      "pattern": "ring with weak discrete hotspots"
+    }
+  },
+  "overall": "WEAK compression texture; median MRD ~0.5 across each figure; the single dominant feature is the {110} central compression fibre at ~2.3-2.5 MRD",
+  "match_priority": [
+    "1. {110} central maximum present at ~2.3-2.5 MRD (pattern + peak)",
+    "2. {100} and {111} central minima with mid-radius rings, peaks ~1.4-1.9",
+    "3. overall texture strength weak (no feature much above 2.5)"
+  ]
+}

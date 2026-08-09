@@ -1,0 +1,34 @@
+# ---- secrets ----
+.env
+*api_key*
+*.key
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# ---- CP-FEM run artifacts (large; regenerate by running) ----
+results/
+*.vtu
+*.pvtu
+QuadratureOutputs*.csv
+*.h5
+input_structure_poly.h5
+
+# ---- optimizer / run outputs (keep code, not run logs) ----
+# comment these out if you want to ship example logs with the paper
+workdir/curves/
+workdir/*.png
+sim.log
+*.log
+
+# ---- MATLAB / MTEX generated figures ----
+matlab/figures/
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+*.swp
