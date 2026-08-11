@@ -14,7 +14,7 @@ loop) is applied unchanged to three structurally different problems:
 
 | | Case study | Material | Task |
 |---|---|---|---|
-| **CS1** | Parameter calibration | SS316L | Recover four Voce hardening parameters that fit an experimental tensile curve. The agent selects a numerical optimizer and delegates the search. |
+| **CS1** | Parameter calibration | SS316L | Recover four hardening parameters that fit an experimental tensile curve. The agent selects a numerical optimizer and delegates the search. |
 | **CS2** | Forward validation | OFHC copper | With fixed parameters, run one compression simulation and validate the flow response and deformation texture against a published benchmark. |
 | **CS3** | Inverse texture recovery | OFHC copper | Given a target deformation texture, search over the initial microstructural texture to reproduce it. |
 
@@ -34,7 +34,7 @@ per-case pipeline structure.
 ├── requirements.txt
 ├── CITATION.cff
 ├── check_environment.py          # environment smoke test (run this first)
-├── case_study_1_calibration/     # CS1: SS316L Voce calibration
+├── case_study_1_calibration/     # CS1: SS316L calibration
 │   ├── calibrate_react.py        #   entry point
 │   ├── config_semi.py            #   bounds, stopping criteria, paths, model
 │   ├── agents/                   #   react_agent.py (ReAct loop)
@@ -206,7 +206,7 @@ python3 calibrate_react.py
 ```
 The agent generates the microstructure, selects Bayesian optimization, and runs the
 calibration. Output: `workdir/optimization_results.csv` (evaluation history),
-`workdir/best_params.json` (calibrated Voce parameters), and figures via
+`workdir/best_params.json` (calibrated parameters), and figures via
 `plot_results.py`.
 
 ### CS2 — forward validation (Cu compression)
@@ -277,5 +277,5 @@ requires a different one.
 ## Contact
 
 Samuel Onimpa Alfred, Department of Aerospace Engineering, University of Michigan,
-Ann Arbor (samoalfred@gmail.com).
+Ann Arbor (soalfred@umich.edu).
 Issues and questions: please use the GitHub issue tracker.
