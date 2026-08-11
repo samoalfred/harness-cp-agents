@@ -1,9 +1,11 @@
-# Harness-Engineered LLM Agents for Crystal Plasticity Simulation
+# Harness-Engineered LLM Agents for Multiscale Modeling: Automating Crystal Plasticity Simulation Workflows
 
 Code accompanying the paper:
 
-> **[PAPER TITLE]**
-> [Author names], *[Journal / preprint]*, [year]. [DOI / arXiv link]
+> **Harness-Engineered LLM Agents for Multiscale Modeling: Automating Crystal Plasticity Simulation Workflows**
+> Samuel Onimpa Alfred, Abhishek Kumar, and Veera Sundararaghavan.
+> Department of Aerospace Engineering, University of Michigan, Ann Arbor.
+> Manuscript, 2026 (DOI to be added upon publication).
 
 A single **harness-engineered, ReAct-style LLM agent** that drives full crystal
 plasticity finite element (CP-FEM) workflows from a one-sentence natural-language
@@ -129,8 +131,8 @@ These are **not** Python packages and must be installed separately.
 Python **3.7+** is required.
 
 ```bash
-git clone [REPO URL]
-cd [repo]
+git clone https://github.com/samoalfred/harness-cp-agents.git
+cd harness-cp-agents
 
 python3 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
@@ -250,12 +252,12 @@ stress-strain and convergence figures from the logged output.
 If you use this code, please cite the paper (see `CITATION.cff`):
 
 ```bibtex
-@article{[KEY],
-  title   = {[PAPER TITLE]},
-  author  = {[Authors]},
-  journal = {[Journal]},
-  year    = {[year]},
-  doi     = {[DOI]}
+@article{alfred2026harness,
+  title   = {Harness-Engineered LLM Agents for Multiscale Modeling: Automating Crystal Plasticity Simulation Workflows},
+  author  = {Alfred, Samuel Onimpa and Kumar, Abhishek and Sundararaghavan, Veera},
+  journal = {Manuscript (under review)},
+  year    = {2026},
+  note    = {DOI to be added upon publication}
 }
 ```
 
@@ -274,5 +276,6 @@ requires a different one.
 
 ## Contact
 
-[Your name] — [email] — [institution].
+Samuel Onimpa Alfred, Department of Aerospace Engineering, University of Michigan,
+Ann Arbor (samoalfred@gmail.com).
 Issues and questions: please use the GitHub issue tracker.

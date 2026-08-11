@@ -9,7 +9,7 @@ Condensed setup. See `README.md` for full detail and background.
 
 ## 1. Get the code
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/samoalfred/harness-cp-agents.git
 cd harness-cp-agents
 ```
 
