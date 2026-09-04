@@ -51,6 +51,10 @@ per-case pipeline structure.
 │   ├── inverse_search.py         #   Bayesian optimization over the initial texture
 │   ├── config_semi.py, agents/, tools/
 │   └── fig10_targets.json        #   digitized target pole-figure features
+├── experiments/                  # Section 3.5: reliability & robustness studies
+│   ├── reliability/              #   correct-sequence + termination over repeated runs
+│   ├── ablation/                 #   2x2 tool-name x tool-description ablation
+│   └── recovery/                 #   induced-fault error-recovery trace (paper S3)
 └── docs/                         # structure maps, pipeline diagram
 ```
 
