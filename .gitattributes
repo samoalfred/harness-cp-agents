@@ -1,0 +1,25 @@
+# Normalize line endings: store text as LF in the repo, check out native.
+* text=auto
+
+# Scripts that must stay LF even on Windows checkouts
+*.sh  text eol=lf
+
+# Explicit text types
+*.py   text
+*.m    text
+*.md   text
+*.txt  text
+*.csv  text
+*.json text
+*.prm  text
+*.cff  text
+
+# Binary assets (never diff or normalize)
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.mat  binary
+*.h5   binary
+*.vtu  binary
+*.pvtu binary
+*.pdf  binary
