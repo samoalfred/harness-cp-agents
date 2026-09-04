@@ -37,12 +37,17 @@ from tools.sim_tools import reset_counter
 import shutil
 
 DEFAULT_QUERY = (
-    "First generate the SS316L microstructure and convert it to PRISMS input, then "
-    "calibrate the crystal plasticity slip parameters for SS316L austenitic stainless steel "
-    "to match the experimental tensile stress-strain data in SS316L_experiment.txt. "
-    "Use Bayesian Optimization. "
-    "Tune: Initial Slip Resistance [100-150 MPa], Initial Hardening Modulus [800-2500 MPa], "
-    "Saturation Stress [350-600 MPa], Power Law Exponent [1-3]. "
+    # "First generate the SS316L microstructure and convert it to PRISMS input, then "
+    # "calibrate the crystal plasticity slip parameters for SS316L austenitic stainless steel "
+    # "to match the experimental tensile stress-strain data in SS316L_experiment.txt. "
+    # "Use Bayesian Optimization. "
+    # "Tune: Initial Slip Resistance [100-150 MPa], Initial Hardening Modulus [800-2500 MPa], "
+    # "Saturation Stress [350-600 MPa], Power Law Exponent [1-3]. "
+    # "Stop when RMSE < 5 MPa or MAPE < 2% or after 60 simulations."
+    
+    "Generate a random SS316L microstructure for crystal plasticity simulations using PRISMS plasticity. "
+    "Then calibrate the crystal plasticity slip parameters for SS316L to match the experimental tensile stress-strain data (SS316L_experiment.txt). "
+    "Use Bayesian Optimization. Tune: Initial Slip Resistance [100-150 MPa], Initial Hardening Modulus [800-2500 MPa], Saturation Stress [350-600 MPa], Power Law Exponent [1-3]. "
     "Stop when RMSE < 5 MPa or MAPE < 2% or after 60 simulations."
 )
 

@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-react_agent.py — Pure goal-driven ReAct Agent for SS316L Texture Comparison.
+react_agent.py — Pure goal-driven ReAct Agent for CS2_Texture_Evolution.
 
-The LLM is given a goal and a tool list only — no prescribed workflow.
+Reproduces the OFHC-copper compression example of Yaghoobi et al. (2022)
+with PRISMS-Plasticity TM (rate-dependent, m=77, Taylor model, velocity-
+gradient BC; run via the ../../main_ratedep binary). The LLM is given a goal
+and a tool list only — no prescribed workflow.
 It reasons from first principles about what to call, in what order,
 observes results, and decides what to do next until the task is complete.
 """
@@ -54,7 +57,7 @@ class ReactAgent(object):
 
     def run(self, query):
         print("\n" + "=" * 65)
-        print("[ReAct] SS316L PURE REACT PIPELINE STARTED")
+        print("[ReAct] CS2_TEXTURE_EVOLUTION PIPELINE STARTED")
         print("[ReAct] Query: {}".format(query))
         print("=" * 65)
 

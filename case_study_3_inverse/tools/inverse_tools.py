@@ -20,13 +20,13 @@ TOOL_SCHEMAS = [
             "name": "run_bayesian_texture_inverse",
             "description": (
                 "Recover the initial crystallographic texture that reproduces the "
-                "target Fig. 10 deformation texture, using Bayesian optimization "
+                "target Fig. 2c deformation texture, using Bayesian optimization "
                 "(Gaussian process + expected improvement) over the initial-texture "
                 "design variables: texture mode {random, fiber[100], fiber[110], "
                 "fiber[111]} and fibre spread sigma. Most sample-efficient; the "
                 "recommended choice for this expensive forward model. Each evaluation "
-                "runs a full crystal plasticity simulation and scores the deformed "
-                "texture against fig10_targets.json."
+                "runs a full rate-dependent Taylor crystal plasticity simulation and "
+                "scores the deformed texture against fig2c_targets.json."
             ),
             "parameters": {
                 "type": "object",
@@ -86,11 +86,14 @@ def execute_tool(tool_name, args):
             "orientation distribution)." if recovered_random else
             "The recovered initial texture is a fibre component; inspect the log to "
             "judge whether this is physically meaningful.")
+    fin = res.get("final_rerun")
+    final_note = (" The recovered optimum was then re-run at full Taylor substeps "
+                  "(converged loss={:.3f}).".format(fin["loss"]) if fin else "")
     return (
         "COMPLETE: {} finished after {} evaluations. "
         "Best initial texture -- mode={}, fiber={}, sigma={:.1f} deg, texture-match loss={:.3f}. "
-        "{} Log: {}. "
+        "{}{} Log: {}. "
         "Please provide a physical interpretation of the recovered initial texture "
-        "in relation to the target Fig. 10 compression texture."
+        "in relation to the target Fig. 2c compression texture."
     ).format(tool_name, res["n_evals"], b["mode"], b["fiber"], b["sigma"], b["loss"],
-             note, res["log"])
+             note, final_note, res["log"])

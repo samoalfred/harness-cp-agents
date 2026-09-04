@@ -10,7 +10,7 @@ import subprocess
 import time
 
 BASE_DIR    = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SIM_COMMAND = "../../main"
+SIM_COMMAND = "../../main_ratedep"   # rate-dependent binary (paper Application 1); shared ../../main stays rate-independent
 PRM_FILE    = "prm.prm"
 TIMEOUT_SEC = 7200
 

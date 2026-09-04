@@ -19,19 +19,28 @@ run('C:\Users\samoa\OneDrive - Umich\Documents\MATLAB\mtex-6.0.0\mtex-6.0.0\star
 % calibration budget (~60 simulations). grid_num = 31 -> 32 voxels per side.
 % mean_d is enlarged accordingly so the domain holds ~350 well-resolved
 % grains rather than thousands of unresolved ones.
-max_len          = 1;
-cube_len         = 1;
-grid_num         = 31;
-dx               = cube_len / grid_num;
-xmin = 0; ymin = 0; zmin = 0;
+% --- Domain Variables ---
+max_len = 1;           % [mm] max_len: Absolute maximum physical length allowed for the domain boundaries.
+cube_len = 1;          % [mm] cube_len: The actual physical side length of the cubic domain being generated.
+grid_num = 31;          % [voxels] grid_num: Number of voxels along each 1D edge of the cube (Resolution).
+dx = cube_len/grid_num;  % [mm] dx: The physical length of a single voxel edge.
+xmin = 0;                % [mm] xmin: Lower boundary of the domain on the X-axis (Origin).
+ymin = 0;                % [mm] ymin: Lower boundary of the domain on the Y-axis (Origin).
+zmin = 0;                % [mm] zmin: Lower boundary of the domain on the Z-axis (Origin).
 
-mean_d           = 0.105;
-std_d            = 0.35 * mean_d;
-mean_aspect      = 3.18;
-std_aspect       = 0.25 * mean_aspect;
+% --- Grain Statistics Variables ---
+mean_d = 0.055;        % [mm] mean_d: Target average equivalent diameter of the grains in the XY plane.
+std_d  = 0.35*mean_d;  % [mm] std_d: Standard deviation of the grain diameter (controls size variability). 0.35*mean_d
 
-orientation_type = 'textured';
-sigma_spread     = 5.0;
+
+% Aspect ratio variables (defines if grains are equiaxed (~1.0) or columnar (>1.0))
+mean_aspect = 1;              % [ratio] mean_aspect: Average length-to-width ratio of the grains. mean_aspect = 3.18;
+%std_aspect = 0.0025 * mean_aspect; % [ratio] std_aspect: Standard deviation of the aspect ratio. std_aspect = 0.25 * mean_aspect
+std_aspect = 0.000001; % [ratio] std_aspect: Standard deviation of the aspect ratio. std_aspect = 0.25 * mean_aspect
+
+% --- Orientation Settings Variables ---
+orientation_type = 'random'; % [string] orientation_type: 'textured' for aligned orientations, or 'random'.
+sigma_spread = 10;             % [degrees] sigma_spread: If 'textured', defines how much orientations can deviate from the primary axis. %sigma_spread = 15;
 
 pore_type        = 'EOS';
 desc             = 'Spherical Gas Pore';

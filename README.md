@@ -45,12 +45,12 @@ per-case pipeline structure.
 ├── case_study_2_forward/         # CS2: Cu forward validation
 │   ├── run_pipeline.py           #   entry point
 │   ├── config_semi.py, agents/, tools/
-│   └── Cu_AnandKothari1996.csv   #   reference stress-strain data
+│   └── Yaghoobi et al. (2022).csv #  digitized reference stress-strain curve
 ├── case_study_3_inverse/         # CS3: Cu inverse texture recovery
 │   ├── inverse_react.py          #   entry point (agent selects the strategy)
 │   ├── inverse_search.py         #   Bayesian optimization over the initial texture
 │   ├── config_semi.py, agents/, tools/
-│   └── fig10_targets.json        #   digitized target pole-figure features
+│   └── fig2c_targets.json        #   digitized target pole-figure features
 ├── experiments/                  # Section 3.5: reliability & robustness studies
 │   ├── reliability/              #   correct-sequence + termination over repeated runs
 │   ├── ablation/                 #   2x2 tool-name x tool-description ablation
@@ -62,11 +62,12 @@ Each `case_study_*` folder also contains a `matlab/` subfolder (MTEX scripts for
 microstructure generation and pole figures) and a `workdir/` with small example
 output logs (`optimization_results.csv`, `inverse_log.csv`, `best_*.json`).
 
-> **Note.** These folders were assembled from the working directories
-> `SS316L_Semi_LLM_React_MicroGen/`, `Cu_REACT_Investigation2/`, and
-> `Cu_REACT_Inverse2/`, with the heavy run artifacts (`results/`, `*.vtu`,
-> `QuadratureOutputs*.csv`, HDF5, generated figures) excluded per `.gitignore`;
-> paths in each `config_semi.py` are relative, so the folders are self-contained.
+> **Note.** These folders mirror the exact harnesses used for the paper
+> (`SS316L_Semi_LLM_React_MicroGen3/`, `CS2_Texture_Evolution/`, and
+> `CS3_Inverse_Problem/`), with the heavy run artifacts (`results/`, `*.vtu`,
+> `QuadratureOutputs*.csv`, HDF5, `.mat`, generated figures) excluded per
+> `.gitignore`; paths in each `config_semi.py` are relative, so the folders are
+> self-contained.
 
 ---
 

@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-score_texture.py -- objective function for the Case Study 3 inverse problem.
+score_texture.py -- objective function for the Case Study 3 inverse problem
+(rate-dependent Taylor forward model, Yaghoobi et al. 2022 Application 1).
 
 Reads the post-deformation orientations (Rodrigues vectors) produced by a run,
-computes {100},{110},{111} pole-figure features in pure Python (no MATLAB, so it
+computes {111},{100},{110} pole-figure features in pure Python (no MATLAB, so it
 is fast enough to call inside an optimization loop), and returns a scalar loss
-measuring the distance to the Fig. 10 target (fig10_targets.json).
+measuring the distance to the Fig. 2c target (fig2c_targets.json, 0 to 3.5 MRD).
 
-Key discriminating features of the Fig. 10 compression texture:
+Key discriminating features of the Fig. 2c compression texture:
   {110} : central MAXIMUM  (the <110> compression fibre along the load axis Z)
   {100} : central minimum
   {111} : central minimum
@@ -19,7 +20,7 @@ import numpy as np
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _BASE = os.path.dirname(_HERE)
 POST_FILE    = os.path.join(_BASE, "matlab", "orientations_post_deformation.csv")
-TARGET_FILE  = os.path.join(_BASE, "fig10_targets.json")
+TARGET_FILE  = os.path.join(_BASE, "fig2c_targets.json")
 
 HALFWIDTH_DEG = 8.0     # ODF kernel halfwidth (matches the pipeline)
 CENTER_CAP_DEG = 12.0   # cap half-angle used for the "central" intensity
@@ -96,15 +97,17 @@ def compute_features(post_file=POST_FILE):
 
 def score(post_file=POST_FILE, target_file=TARGET_FILE, verbose=True):
     feats = compute_features(post_file)
-    tgt = json.load(open(target_file))["pole_figures"]
-    # target central intensity: {110} is a maximum (~peak), {100}/{111} minima
-    tgt_center = {"100": 0.4, "110": tgt["110"]["peak_MRD"], "111": 0.4}
+    doc = json.load(open(target_file))
+    tgt = doc["pole_figures"]
+    weights = doc.get("weights", {"110": 2.0})
+    # explicit digitized central targets ({110} maximum, {100}/{111} minima)
+    tgt_center = {n: tgt[n]["central_MRD"] for n in ["100", "110", "111"]}
     loss = 0.0
     parts = {}
     for n in ["100", "110", "111"]:
         dpeak = feats[n]["peak"] - tgt[n]["peak_MRD"]
         dctr = feats[n]["center"] - tgt_center[n]
-        w = 2.0 if n == "110" else 1.0           # weight the fibre feature
+        w = float(weights.get(n, 1.0))           # weight the fibre feature ({110} x2)
         li = w * (0.5 * dpeak ** 2 + dctr ** 2)
         loss += li
         parts[n] = {"peak": round(feats[n]["peak"], 2), "center": round(feats[n]["center"], 2),

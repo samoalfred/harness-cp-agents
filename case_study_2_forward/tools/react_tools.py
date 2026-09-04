@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-react_tools.py
+react_tools.py  (CS2_Texture_Evolution)
 
 Defines the tool schemas (OpenAI function-calling format) exposed to the
 ReAct agent, and an executor that runs whichever tool the LLM selects.
 
-The LLM sees each tool's name, description, and parameter schema.
-It decides which tool to call, in what order, and with what arguments.
-The executor runs the tool and returns an observation string that is fed
-back into the conversation so the LLM can reason about what to do next.
+This build reproduces the OFHC-copper compression example of Yaghoobi et al.
+(2022) with PRISMS-Plasticity TM: a RATE-INDEPENDENT crystal-plasticity model
+using the TAYLOR homogenization scheme, driven by an imposed VELOCITY GRADIENT
+boundary condition (uniaxial compression along Z to a nominal true strain of
+1.0). The microstructure (GrainId.txt, orientations_FCC_400grains.txt,
+orientations.txt) and prm.prm are ALREADY configured in this folder, so the
+usual generation / conversion / parameter-injection steps are not required for
+this study; the agent should run the simulation and produce the two comparisons.
 """
 
 import json
@@ -20,7 +24,7 @@ _BASE = os.path.dirname(_HERE)
 sys.path.insert(0, _BASE)
 sys.path.insert(0, _HERE)
 
-# ── Tool schemas (OpenAI function-calling format) ──────────────────────────
+# -- Tool schemas (OpenAI function-calling format) --------------------------
 
 TOOL_SCHEMAS = [
 
@@ -29,12 +33,15 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "inject_simulation_parameters",
             "description": (
-                "Configure the simulation by writing parameters directly into "
-                "microstructure_gen.m (texture type, fiber direction, spread) and "
-                "prm.prm (slip parameters for all 12 FCC slip systems). "
-                "Always call this first so the simulation reflects the user's request. "
-                "IMPORTANT: only set a parameter to a non-default value if the user "
-                "explicitly specified it. Use the stated defaults for everything else."
+                "OPTIONAL / NOT REQUIRED FOR THIS STUDY. Overwrites the slip "
+                "parameters in prm.prm and the texture settings in "
+                "microstructure_gen.m. The prm.prm and microstructure in this "
+                "folder are ALREADY configured to reproduce Yaghoobi et al. "
+                "(2022) (rate-independent Taylor model, velocity-gradient BC, "
+                "Cu slip parameters), so you normally should NOT call this. "
+                "Only call it if the user explicitly asks to change a slip "
+                "parameter; otherwise leave prm.prm untouched. Defaults below "
+                "match the values already in prm.prm."
             ),
             "parameters": {
                 "type": "object",
@@ -42,32 +49,32 @@ TOOL_SCHEMAS = [
                     "orientation_type": {
                         "type": "string",
                         "enum": ["textured", "random"],
-                        "description": "Grain orientation distribution type. Default: 'random' (this investigation targets the Fig. 10 deformation texture, which develops from a random initial texture). Only use 'textured' if the user explicitly requests a fiber texture."
+                        "description": "Grain orientation distribution type. Default: 'random'. Only relevant if regenerating the microstructure (not required here)."
                     },
                     "fiber_direction": {
                         "type": "array",
                         "items": {"type": "integer"},
-                        "description": "Miller indices of fiber axis, used only when orientation_type is 'textured'. Ignored for random texture. Default: [1,0,1]."
+                        "description": "Miller indices of fiber axis, used only when orientation_type is 'textured'. Default: [1,0,1]."
                     },
                     "sigma_spread": {
                         "type": "number",
-                        "description": "Angular scatter around fiber axis in degrees, used only when orientation_type is 'textured'. Ignored for random texture. Default: 15.0. Only change if the user explicitly requests a different value."
+                        "description": "Angular scatter around fiber axis in degrees (textured only). Default: 15.0."
                     },
                     "s0": {
                         "type": "number",
-                        "description": "Initial Slip Resistance in MPa. Default: 16.0 (Cu). Only change if the user explicitly specifies it."
+                        "description": "Initial Slip Resistance in MPa. Default: 16.0 (Cu, already in prm.prm)."
                     },
                     "h0": {
                         "type": "number",
-                        "description": "Initial Hardening Modulus in MPa. Default: 180.0 (Cu). Only change if the user explicitly specifies it."
+                        "description": "Initial Hardening Modulus in MPa. Default: 200.0 (already in prm.prm)."
                     },
                     "ss": {
                         "type": "number",
-                        "description": "Saturation Stress in MPa (slip resistance at hardening saturation). Default: 148.0 (Cu). Only change if the user explicitly specifies it."
+                        "description": "Saturation Stress in MPa. Default: 129.5 (already in prm.prm)."
                     },
                     "n": {
                         "type": "number",
-                        "description": "Power Law Exponent (hardening exponent a, dimensionless). Default: 2.25 (Cu). Only change if the user explicitly specifies it."
+                        "description": "Power Law Exponent (dimensionless). Default: 2.0 (already in prm.prm)."
                     }
                 },
                 "required": ["orientation_type", "fiber_direction", "sigma_spread",
@@ -81,16 +88,15 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "generate_microstructure",
             "description": (
-                "Run MATLAB to generate a synthetic 3D Cu polycrystal microstructure "
-                "(64x64x64 voxels, ~400 equiaxed grains, random texture). Produces "
-                "input_structure_poly.h5, pre-deformation pole figures, and "
-                "output_summary.txt. Call inject_simulation_parameters before this."
+                "OPTIONAL / NOT REQUIRED FOR THIS STUDY. Runs MATLAB to generate "
+                "a NEW synthetic Cu polycrystal microstructure. This folder "
+                "already contains a pre-generated ~400-grain microstructure "
+                "(GrainId.txt + orientations_FCC_400grains.txt), so you should "
+                "NOT call this unless the user explicitly asks to generate a new "
+                "microstructure. Using the existing microstructure is the "
+                "intended path for this study."
             ),
-            "parameters": {
-                "type": "object",
-                "properties": {},
-                "required": []
-            }
+            "parameters": {"type": "object", "properties": {}, "required": []}
         }
     },
 
@@ -99,15 +105,14 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "convert_hdf5_to_prisms",
             "description": (
-                "Convert the HDF5 microstructure file to PRISMS-Plasticity input format. "
-                "Writes grainID.txt and orientations.txt, and updates prm.prm with the "
-                "correct voxel dimensions. Call after generate_microstructure."
+                "OPTIONAL / NOT REQUIRED FOR THIS STUDY. Converts a freshly "
+                "generated HDF5 microstructure to PRISMS input (grainID.txt, "
+                "orientations.txt) and updates prm.prm voxel dimensions. Only "
+                "needed after generate_microstructure. The PRISMS input files "
+                "are already present, so skip this unless a new microstructure "
+                "was just generated."
             ),
-            "parameters": {
-                "type": "object",
-                "properties": {},
-                "required": []
-            }
+            "parameters": {"type": "object", "properties": {}, "required": []}
         }
     },
 
@@ -116,17 +121,20 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "run_simulation",
             "description": (
-                "Run a single PRISMS-Plasticity crystal plasticity FEM simulation "
-                "under uniaxial COMPRESSION to 40% true strain along Z (engineering "
-                "displacement -0.3297, set in BCinfo.txt) using the current prm.prm "
-                "settings. Produces QuadratureOutputsXXX.csv files and "
-                "results/stressstrain.txt. Call after convert_hdf5_to_prisms."
+                "Run a single PRISMS-Plasticity TM crystal-plasticity simulation "
+                "with the current prm.prm (via the rate-dependent binary "
+                "../../main_ratedep). The model is RATE-DEPENDENT with isotropic "
+                "hardening (gamma_dot0 = 1e-3, m = 77) and uses the TAYLOR "
+                "homogenization scheme (Flag To Use Taylor Model = true). Loading "
+                "is uniaxial COMPRESSION along Z through a VELOCITY GRADIENT "
+                "boundary condition (L = diag(0.0005, 0.0005, -0.001), Total time "
+                "1000), true strain reaching 1.0 (texture snapshot at t = 990 = "
+                "-99%). Produces QuadratureOutputsXXX.csv and "
+                "results/stressstrain.txt. This is the first tool to call for this "
+                "study (microstructure and prm.prm are already configured). "
+                "Runtime is ~15 min single-core."
             ),
-            "parameters": {
-                "type": "object",
-                "properties": {},
-                "required": []
-            }
+            "parameters": {"type": "object", "properties": {}, "required": []}
         }
     },
 
@@ -135,15 +143,12 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "extract_post_orientations",
             "description": (
-                "Find the last QuadratureOutputsXXX.csv in results/, extract columns 8-10 "
-                "(post-deformation Rodrigues vectors rx, ry, rz), and save to "
-                "matlab/orientations_post_deformation.csv. Call after run_simulation."
+                "Find the last QuadratureOutputsXXX.csv in results/, extract "
+                "columns 8-10 (post-deformation Rodrigues vectors rx, ry, rz), "
+                "and save to matlab/orientations_post_deformation.csv. Call after "
+                "run_simulation."
             ),
-            "parameters": {
-                "type": "object",
-                "properties": {},
-                "required": []
-            }
+            "parameters": {"type": "object", "properties": {}, "required": []}
         }
     },
 
@@ -152,15 +157,16 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "generate_pole_figures",
             "description": (
-                "Run MATLAB oriplot_big.m to compute pre- and post-deformation ODFs "
-                "and generate {100}, {110}, {111} pole figures with matched color scales. "
-                "Saves 6 PNG files. Call after extract_post_orientations."
+                "Run MATLAB oriplot_big.m to compute pre- and post-deformation "
+                "ODFs and generate {100}, {110}, {111} pole figures on the fixed "
+                "0-3.5 MRD scale (matching the paper). The pre-deformation texture "
+                "is read from the existing orientations.txt (the initial "
+                "~400-grain texture); the post-deformation texture is read from "
+                "orientations_post_deformation.csv. Saves the 6 pre/post PNGs plus "
+                "the three post-deformation tiles (tile_mine_111/100/110.png) used "
+                "for the paper comparison. Call after extract_post_orientations."
             ),
-            "parameters": {
-                "type": "object",
-                "properties": {},
-                "required": []
-            }
+            "parameters": {"type": "object", "properties": {}, "required": []}
         }
     },
 
@@ -169,17 +175,18 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "create_comparison_figure",
             "description": (
-                "Assemble a publication-quality 3x2 side-by-side comparison figure "
-                "(Pre | Post for each of {100}, {110}, {111}) saved as "
-                "matlab/figures/texture_comparison.png at 300 DPI. This compares the "
-                "initial random texture with the texture after 40% compression. "
-                "Call after generate_pole_figures."
+                "Assemble the texture comparison figures, all on the fixed "
+                "0-3.5 MRD scale (matching the paper). Produces TWO outputs: "
+                "(1) matlab/figures/texture_comparison.png -- the pre vs post "
+                "pole figures ({100},{110},{111}), showing the texture evolution; "
+                "and (2) matlab/figures/texture_vs_paper.png -- the aligned "
+                "comparison of THIS simulation's post-deformation pole figures "
+                "(top row) against the reference paper Fig. 2c "
+                "(Reference_Plot_figures.png, bottom row), {111}/{100}/{110} "
+                "columns aligned on a shared colorbar. Call after "
+                "generate_pole_figures."
             ),
-            "parameters": {
-                "type": "object",
-                "properties": {},
-                "required": []
-            }
+            "parameters": {"type": "object", "properties": {}, "required": []}
         }
     },
 
@@ -188,25 +195,25 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "compare_stress_strain",
             "description": (
-                "Compare the simulated stress-strain response against the experimental "
-                "tension-converted Cu dataset (Cu_AnandKothari1996.csv). Reads the axial "
-                "components from results/stressstrain.txt, converts the compressive "
-                "response to its tensile equivalent by taking magnitudes, overlays it on "
-                "the experiment, and computes RMSE and MAPE over the overlapping strain "
-                "range (0 to ~0.4). Saves matlab/figures/stress_strain_comparison.png. "
-                "Call after run_simulation."
+                "Compare the simulated EQUIVALENT (von Mises) stress versus "
+                "EQUIVALENT strain against the digitized PRISMS-Plasticity TM "
+                "reference curve of Yaghoobi et al. (2022) in 'Yaghoobi et al. "
+                "(2022).csv'. Reads the homogenized stress and strain tensors from "
+                "results/stressstrain.txt, forms the von Mises equivalent stress "
+                "and equivalent strain, overlays them on the reference, and "
+                "computes RMSE and MAPE over the overlapping strain range. With "
+                "the rate-dependent model the run stays nearly pressure-free, so "
+                "the equivalent stress is the correct measure. Saves "
+                "matlab/figures/stress_strain_comparison.png. Call after "
+                "run_simulation."
             ),
-            "parameters": {
-                "type": "object",
-                "properties": {},
-                "required": []
-            }
+            "parameters": {"type": "object", "properties": {}, "required": []}
         }
     },
 ]
 
 
-# ── Tool executor ──────────────────────────────────────────────────────────
+# -- Tool executor ----------------------------------------------------------
 
 def execute_tool(tool_name, tool_args):
     """
@@ -255,10 +262,17 @@ def execute_tool(tool_name, tool_args):
 
         elif tool_name == "create_comparison_figure":
             from texture_compare import create_comparison
+            from texture_vs_paper import build_paper_comparison
             ok, msg, path = create_comparison()
-            if ok:
-                return "SUCCESS: {}. Saved to: {}".format(msg, path)
-            return "FAILED: {}".format(msg)
+            if not ok:
+                return "FAILED: {}".format(msg)
+            ok2, msg2, path2 = build_paper_comparison()
+            if ok2:
+                return ("SUCCESS: {} Saved: {}. Also built the aligned "
+                        "this-study-vs-paper comparison (same 0-3.5 MRD scale): "
+                        "{}.").format(msg, path, path2)
+            return ("SUCCESS: {} Saved: {}. (Paper-comparison figure skipped: "
+                    "{})").format(msg, path, msg2)
 
         elif tool_name == "compare_stress_strain":
             from stress_strain_compare import compare_stress_strain
@@ -279,16 +293,16 @@ def _inject_params(args):
         "fiber_direction":  args.get("fiber_direction", [1, 0, 1]),
         "sigma_spread":     float(args.get("sigma_spread", 15.0)),
         "s0":               float(args.get("s0", 16.0)),
-        "h0":               float(args.get("h0", 180.0)),
-        "ss":               float(args.get("ss", 148.0)),
-        "n":                float(args.get("n", 2.25)),
+        "h0":               float(args.get("h0", 200.0)),
+        "ss":               float(args.get("ss", 129.5)),
+        "n":                float(args.get("n", 2.0)),
     }
     ok, msg = inject_all(params)
     if ok:
         fd = params["fiber_direction"]
         return (
             "SUCCESS: Config files updated. "
-            "orientation_type={}, fiber_direction=[{} {} {}], sigma_spread={}°, "
+            "orientation_type={}, fiber_direction=[{} {} {}], sigma_spread={} deg, "
             "s0={} MPa, h0={} MPa, ss={} MPa, n={}"
         ).format(params["orientation_type"], fd[0], fd[1], fd[2],
                  params["sigma_spread"], params["s0"], params["h0"],

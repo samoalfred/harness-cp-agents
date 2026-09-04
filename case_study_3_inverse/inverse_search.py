@@ -1,12 +1,14 @@
 #!/usr/bin/env python3.7
 # -*- coding: utf-8 -*-
 """
-inverse_search.py -- Case Study 3 inverse problem.
+inverse_search.py -- Case Study 3 inverse problem (rate-dependent Taylor).
 
-Bayesian optimization over the INITIAL TEXTURE to reproduce the Fig. 10
-deformation texture. Each evaluation runs the full forward pipeline
-(generate -> convert -> compress -> extract orientations) and scores the
-deformed texture against fig10_targets.json with tools/score_texture.py.
+Bayesian optimization over the INITIAL TEXTURE to reproduce the Fig. 2c
+deformation texture of Yaghoobi et al. (2022), Application 1 (OFHC copper,
+uniaxial compression to true strain ~1.0, rate-dependent Taylor model, m=77).
+Each evaluation runs the full forward pipeline (generate -> convert ->
+compress -> extract orientations) and scores the deformed texture against
+fig2c_targets.json with tools/score_texture.py.
 
 Design variables (what the agent recovers):
   - texture mode : {random, fiber[100], fiber[110], fiber[111]}   (categorical,
@@ -14,13 +16,13 @@ Design variables (what the agent recovers):
   - sigma_spread : initial fibre spread in degrees, [3, 85]        (continuous,
                     ignored when mode == random)
 
-Everything else is fixed (Cu slip parameters, 40% Z-compression, roller BCs,
-~400 grains, refine factor set in prm.prm). Budget: 15 evaluations.
+Everything else is fixed (Cu slip parameters s0=16/h0=200/ss=129.5/a=2, m=77,
+velocity-gradient BC to true strain ~1.0, Taylor 400-grain RVE). Budget: 15.
 
 Expected result: the search selects the random mode (or a very diffuse fibre),
-recovering that a near-random initial texture reproduces Fig. 10.
+recovering that a near-random initial texture reproduces Fig. 2c.
 """
-import os, sys, csv, json, time
+import os, sys, csv, json, time, re, shutil
 import numpy as np
 
 _BASE = os.path.dirname(os.path.abspath(__file__))
@@ -46,6 +48,32 @@ FIBERS = {"f100": [1, 0, 0], "f110": [1, 1, 0], "f111": [1, 1, 1]}
 WORKDIR = os.path.join(_BASE, "workdir")
 LOG     = os.path.join(WORKDIR, "inverse_log.csv")
 BEST    = os.path.join(WORKDIR, "best_texture.json")
+
+PRM_FILE        = os.path.join(_BASE, "prm.prm")
+FINAL_SUBSTEPS  = 100                       # converged re-run of the recovered optimum
+MATLAB_DIR      = os.path.join(_BASE, "matlab")
+# Dedicated final-run outputs (kept SEPARATE so the auto re-run overwrites nothing
+# the search produced: not the per-eval orientations, not the log, not best_texture.json).
+POST_SEARCH     = os.path.join(MATLAB_DIR, "orientations_post_deformation.csv")        # transient (per eval)
+POST_BEST100    = os.path.join(MATLAB_DIR, "orientations_post_deformation_best100.csv")  # authoritative optimum
+BEST_FINAL_JSON = os.path.join(WORKDIR, "best_texture_final100.json")
+
+
+def _get_substeps():
+    """Read the current 'Number of Taylor Substeps' from prm.prm."""
+    for ln in open(PRM_FILE):
+        if ln.strip().startswith("set Number of Taylor Substeps"):
+            return int(ln.split("=")[1].strip())
+    return None
+
+
+def _set_substeps(n):
+    """Set 'Number of Taylor Substeps' in prm.prm to n (in place)."""
+    with open(PRM_FILE) as f:
+        c = f.read()
+    c = re.sub(r"(set Number of Taylor Substeps\s*=\s*)\d+", r"\g<1>{}".format(n), c)
+    with open(PRM_FILE, "w") as f:
+        f.write(c)
 
 
 # ── candidate pool + encoding ──────────────────────────────────────
@@ -114,10 +142,12 @@ def log_row(it, c, loss, parts):
                     g("110","peak"), g("110","center"), g("111","peak"), g("111","center")])
 
 
-def run_search(method="bayesian", budget=N_BUDGET):
+def run_search(method="bayesian", budget=N_BUDGET, final_rerun=True):
     """
     Run the inverse texture search. method: 'bayesian' (GP + expected
-    improvement) or 'random' (random sampling baseline). Returns a result dict.
+    improvement) or 'random' (random sampling baseline). When final_rerun is
+    True (default), the recovered optimum is automatically re-run at full Taylor
+    substeps into dedicated files (see rerun_best_full). Returns a result dict.
     """
     if not os.path.isdir(WORKDIR):
         os.makedirs(WORKDIR)
@@ -136,13 +166,13 @@ def run_search(method="bayesian", budget=N_BUDGET):
     rf = "?"
     try:
         for _ln in open(os.path.join(_BASE, "prm.prm")):
-            if _ln.strip().startswith("set Refine factor"):
+            if _ln.strip().startswith("set Number of Taylor Substeps"):
                 rf = _ln.split("=")[1].strip(); break
     except Exception:
         pass
     print("=" * 64)
     print("  Case Study 3: inverse texture search (%s)" % method)
-    print("  Budget: %d evaluations | refine factor %s" % (budget, rf))
+    print("  Budget: %d evaluations | Taylor substeps %s" % (budget, rf))
     print("=" * 64)
 
     for it in range(1, budget + 1):
@@ -182,10 +212,63 @@ def run_search(method="bayesian", budget=N_BUDGET):
           (bc["mode"], bc["fiber"], bc["sigma"], ys[best_i]))
     print("  Log: %s" % LOG)
     print("=" * 64)
+
+    best = {"mode": bc["mode"], "fiber": bc["fiber"],
+            "sigma": bc["sigma"], "loss": ys[best_i]}
+
+    # Auto re-run the recovered optimum at full substeps (dedicated outputs).
+    final = None
+    if final_rerun and ys[best_i] < BIG_LOSS:
+        final = rerun_best_full(best)
+
     return {"method": method, "n_evals": budget, "log": LOG,
-            "best": {"mode": bc["mode"], "fiber": bc["fiber"],
-                     "sigma": bc["sigma"], "loss": ys[best_i]},
-            "history": history}
+            "best": best, "final_rerun": final, "history": history}
+
+
+def rerun_best_full(bc, final_substeps=FINAL_SUBSTEPS):
+    """
+    Re-run the recovered optimum `bc` at full Taylor substeps for a converged
+    result. Writes to DEDICATED files only -- it overwrites nothing the search
+    produced (the per-eval orientations, inverse_log.csv, best_texture.json) and
+    restores prm.prm to the search substeps afterward:
+        matlab/orientations_post_deformation_best100.csv   (authoritative optimum)
+        workdir/best_texture_final100.json                 (its loss + features)
+        matlab/figures/initial_texture_best.png, RVE_3D_best.png (if present)
+    Returns a dict describing the converged re-run (or None if it failed).
+    """
+    search_substeps = _get_substeps()
+    print("\n" + "=" * 64)
+    print("  FINAL RE-RUN of the recovered optimum at %d Taylor substeps" % final_substeps)
+    print("  (search ran at %s substeps; dedicated outputs, nothing overwritten)" % search_substeps)
+    print("=" * 64)
+    result = None
+    try:
+        _set_substeps(final_substeps)
+        c = {"mode": bc["mode"], "fiber": bc["fiber"], "sigma": float(bc["sigma"])}
+        loss, parts = evaluate(c)
+        if loss >= BIG_LOSS:
+            print("  FINAL RE-RUN FAILED (loss=%.1f); leaving search outputs intact." % loss)
+        else:
+            if os.path.isfile(POST_SEARCH):
+                shutil.copyfile(POST_SEARCH, POST_BEST100)
+            for src, dst in [("initial_texture.png", "initial_texture_best.png"),
+                             ("RVE_3D.png", "RVE_3D_best.png")]:
+                s = os.path.join(MATLAB_DIR, "figures", src)
+                if os.path.isfile(s):
+                    shutil.copyfile(s, os.path.join(MATLAB_DIR, "figures", dst))
+            json.dump({"mode": c["mode"], "fiber": c["fiber"], "sigma": c["sigma"],
+                       "substeps": final_substeps, "loss": loss, "parts": parts,
+                       "orientations": os.path.basename(POST_BEST100)},
+                      open(BEST_FINAL_JSON, "w"), indent=2)
+            result = {"loss": loss, "parts": parts, "substeps": final_substeps,
+                      "orientations": POST_BEST100, "json": BEST_FINAL_JSON}
+            print("  FINAL loss=%.4f  ->  %s" % (loss, POST_BEST100))
+            print("  Saved: %s" % BEST_FINAL_JSON)
+    finally:
+        if search_substeps is not None:
+            _set_substeps(search_substeps)   # restore search config; overwrite nothing
+            print("  Restored prm.prm to %s substeps." % search_substeps)
+    return result
 
 
 def main():

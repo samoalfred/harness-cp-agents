@@ -24,10 +24,11 @@ MAX_ITERATIONS = 6   # select one optimizer, run it, interpret
 
 SYSTEM_PROMPT = """\
 You are an autonomous crystal plasticity agent solving an INVERSE problem for \
-copper. A target deformation texture is given (the {100}, {110}, {111} pole \
-figures of OFHC copper after 40% compression, digitized in fig10_targets.json). \
-Your job is to recover the INITIAL crystallographic texture that, after the same \
-40% compression, reproduces that target.
+copper. A target deformation texture is given (the {111}, {100}, {110} pole \
+figures of OFHC copper after uniaxial compression to true strain ~1.0, digitized \
+from Fig. 2c of Yaghoobi et al. (2022) in fig2c_targets.json). Your job is to \
+recover the INITIAL crystallographic texture that, after the same compression with \
+the rate-dependent Taylor model, reproduces that target.
 
 You do this by selecting a search strategy from the repository and launching it. \
 The optimizer searches the initial-texture design variables (texture mode -- \

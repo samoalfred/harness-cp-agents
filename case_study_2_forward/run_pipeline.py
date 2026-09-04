@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-run_pipeline.py — Entry point for SS316L_Pure_REACT.
+run_pipeline.py — Entry point for CS2_Texture_Evolution.
 
 Pure goal-driven ReAct agent: the LLM receives the goal and the tool list
 only — no prescribed workflow. It reads tool descriptions, reasons about
 what to call and in what order, observes results, and adapts until done.
+
+Reproduces the OFHC-copper compression benchmark of Yaghoobi et al. (2022)
+with PRISMS-Plasticity TM (rate-independent, Taylor model, velocity-gradient
+BC). The microstructure and prm.prm are already configured in this folder.
 
 Usage:
     python3.7 run_pipeline.py                         # full run
@@ -23,20 +27,28 @@ if not os.environ.get("OPENAI_API_KEY"):
 from agents.react_agent import ReactAgent
 
 DEFAULT_QUERY = (
-    "Generate a synthetic Cu (copper) polycrystal microstructure with a random texture "
-    "(approximately 400 equiaxed grains) and run a single crystal plasticity simulation "
-    "under uniaxial COMPRESSION to 40% true strain along Z using PRISMS-Plasticity. Then "
-    "perform two comparisons. First, compare the crystallographic texture before and after "
-    "deformation by plotting {100}, {110}, and {111} pole figures side by side, that is the "
-    "initial random texture against the texture at 40% true strain. Second, compare the simulated "
-    "stress-strain response against the experimental tension-converted dataset in "
-    "Cu_AnandKothari1996.csv; the simulation is in compression, so convert its response to "
-    "the tensile equivalent (take magnitudes) and compare over the overlapping strain range "
-    "up to the 40% mark. "
-    "Use the Cu material defaults: Initial Slip Resistance=16 MPa, Initial Hardening "
-    "Modulus=180 MPa, Saturation Stress=148 MPa, Power Law Exponent=2.25. "
-    "Provide a brief physical interpretation of the texture evolution and of the "
-    "stress-strain agreement for copper."
+    "Reproduce Application 1 (polycrystalline OFHC copper, uniaxial compression) of "
+    "Yaghoobi et al. (2022), PRISMS-Plasticity TM, as a forward validation of the copper "
+    "already configured in this folder. The model is a RATE-DEPENDENT crystal plasticity "
+    "formulation with isotropic hardening (gamma_dot0 = 1e-3, rate sensitivity m = 77, no "
+    "twinning, no back stress), homogenized with the Taylor model. Loading is uniaxial "
+    "COMPRESSION along Z through an imposed velocity gradient L = diag(0.0005, 0.0005, "
+    "-0.001), with true strain accumulating linearly to 1.0 (the paper's 99% compression); "
+    "the texture snapshot at t = 990 is the -99% state. The microstructure (about 400 "
+    "grains) and the prm.prm input (including the fixed slip parameters) are already in "
+    "place, so do not regenerate the microstructure, convert it, or change any parameters; "
+    "run the simulation exactly as configured. "
+    "Then perform two comparisons. First, the crystallographic texture: plot {111}, {100}, "
+    "and {110} pole figures (Z at centre) on the fixed 0-3.5 MRD scale, producing both the "
+    "pre-vs-post evolution figure and an aligned comparison of this simulation's "
+    "post-deformation pole figures against the reference paper Fig. 2c "
+    "(Reference_Plot_figures.png); the deformed texture should reproduce the <110> "
+    "compression fibre. "
+    "Second, compare the simulated EQUIVALENT (von Mises) stress versus EQUIVALENT strain "
+    "against the digitized PRISMS-Plasticity TM reference curve of Yaghoobi et al. (2022) in "
+    "'Yaghoobi et al. (2022).csv', reporting RMSE and MAPE over the overlapping strain range. "
+    "Provide a brief physical interpretation of the texture evolution (the development of the "
+    "<110> compression fibre) and of the stress-strain agreement for copper."
 )
 
 

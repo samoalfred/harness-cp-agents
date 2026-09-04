@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-param_injector.py
+param_injector.py -- Case Study 3 (inverse texture, rate-dependent Taylor).
 
-Applies LLM-extracted parameters to the actual config files before the
-pipeline runs. This is the bridge that makes the LLM truly control execution.
+Writes the candidate INITIAL texture proposed by the inverse search into the
+equal-grain microstructure generator (matlab/microstructure_gen.m) before each
+forward evaluation. Only the initial-texture design variables are injected; the
+constitutive parameters (rate-dependent Taylor, m=77, s0/h0/ss/a, ...) are fixed
+in prm.prm at the Yaghoobi et al. (2022) Application 1 values.
 
-Files modified:
-  matlab/microstructure_gen.m  — orientation_type, sigma_spread, fiber_direction
-  prm.prm                      — s0, h0, ss, n (all 12 FCC slip systems)
+Variables set in microstructure_gen.m:
+  orientation_type   'random' | 'textured'
+  fiber_dir          [h k l]        (used only when 'textured')
+  sigma_spread       scatter (deg)  (used only when 'textured')
 """
 
 import os
@@ -15,31 +19,12 @@ import re
 
 BASE_DIR    = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MATLAB_FILE = os.path.join(BASE_DIR, "matlab", "microstructure_gen.m")
-PRM_FILE    = os.path.join(BASE_DIR, "prm.prm")
-
-
-def _replace_matlab_param(content, param, new_value):
-    """Replace  param = <value>;  in MATLAB script (handles strings and numbers)."""
-    if isinstance(new_value, str):
-        pattern     = r"({}[\s]*=[\s]*')[^']*('[\s]*;)".format(re.escape(param))
-        replacement = r"\g<1>{}\2".format(new_value)
-    else:
-        pattern     = r"({}[\s]*=[\s]*)[\d.]+([;\s])".format(re.escape(param))
-        replacement = r"\g<1>{}\2".format(new_value)
-    return re.sub(pattern, replacement, content)
-
-
-def _replace_prm_param(content, param, value):
-    """Replace  set param = v,v,...,v  with 12 copies of the new value."""
-    vals_str = ", ".join([str(float(value))] * 12)
-    pattern  = r"(set {}\s*=\s*)[^\n]+".format(re.escape(param))
-    return re.sub(pattern, r"\g<1>{}".format(vals_str), content)
 
 
 def inject_microstructure_params(params):
     """
-    Write orientation_type, sigma_spread, and fiber_direction into
-    microstructure_gen.m.
+    Write orientation_type, fiber_dir and sigma_spread into microstructure_gen.m.
+    params = {"orientation_type": str, "fiber_direction": [h,k,l], "sigma_spread": float}
     Returns (success, message).
     """
     if not os.path.isfile(MATLAB_FILE):
@@ -48,96 +33,32 @@ def inject_microstructure_params(params):
     with open(MATLAB_FILE, "r") as f:
         content = f.read()
 
-    # orientation_type
-    content = _replace_matlab_param(content, "orientation_type", params["orientation_type"])
-
-    # sigma_spread
-    content = re.sub(
-        r"(sigma_spread\s*=\s*)[\d.]+(\s*;)",
-        r"\g<1>{}\2".format(float(params["sigma_spread"])),
-        content
-    )
-
-    # fiber_direction — replace the c_dir line
+    otype = params["orientation_type"]
     h, k, l = params["fiber_direction"]
-    norm_str = "norm([{} {} {}])".format(h, k, l)
-    new_cdir = "    c_dir = [{} {} {}] / {};".format(h, k, l, norm_str)
-    content  = re.sub(
-        r"    c_dir\s*=\s*\[.*?\]\s*/\s*norm\(\[.*?\]\)\s*;",
-        new_cdir,
-        content
-    )
+    sigma = float(params["sigma_spread"])
 
-    # Also update the fprintf label so it reflects the actual direction
-    content = re.sub(
-        r"(fprintf\('Generating \[)[^\]]+(\] Fiber Texture\\n'\);)",
-        r"\g<1>{} {} {}\2".format(h, k, l),
-        content
-    )
+    # orientation_type = '...';
+    content = re.sub(r"(orientation_type\s*=\s*')[^']*(')",
+                     r"\g<1>{}\2".format(otype), content, count=1)
+
+    # fiber_dir = [h k l];
+    content = re.sub(r"(fiber_dir\s*=\s*\[)[^\]]*(\])",
+                     r"\g<1>{} {} {}\2".format(h, k, l), content, count=1)
+
+    # sigma_spread = <value>;
+    content = re.sub(r"(sigma_spread\s*=\s*)[\d.eE+\-]+",
+                     r"\g<1>{}".format(sigma), content, count=1)
 
     with open(MATLAB_FILE, "w") as f:
         f.write(content)
 
     msg = ("microstructure_gen.m updated: orientation_type='{}', "
-           "sigma_spread={}, fiber_direction=[{} {} {}]").format(
-        params["orientation_type"], params["sigma_spread"], h, k, l)
+           "fiber_dir=[{} {} {}], sigma_spread={}").format(otype, h, k, l, sigma)
     print("[Injector] {}".format(msg))
     return True, msg
-
-
-def inject_prm_params(params):
-    """
-    Write s0, h0, ss, n into prm.prm for all 12 FCC slip systems.
-    Returns (success, message).
-    """
-    if not os.path.isfile(PRM_FILE):
-        return False, "prm.prm not found: {}".format(PRM_FILE)
-
-    with open(PRM_FILE, "r") as f:
-        content = f.read()
-
-    content = _replace_prm_param(content, "Initial Slip Resistance",   params["s0"])
-    content = _replace_prm_param(content, "Initial Hardening Modulus", params["h0"])
-    content = _replace_prm_param(content, "Saturation Stress",         params["ss"])
-    content = _replace_prm_param(content, "Power Law Exponent",        params["n"])
-
-    with open(PRM_FILE, "w") as f:
-        f.write(content)
-
-    msg = ("prm.prm updated: s0={}, h0={}, ss={}, n={}").format(
-        params["s0"], params["h0"], params["ss"], params["n"])
-    print("[Injector] {}".format(msg))
-    return True, msg
-
-
-def inject_all(params):
-    """
-    Apply all LLM-extracted parameters to config files.
-    Returns (success, summary_message).
-    """
-    print("\n[Injector] Applying LLM parameters to config files...")
-
-    ok1, msg1 = inject_microstructure_params(params)
-    if not ok1:
-        return False, msg1
-
-    ok2, msg2 = inject_prm_params(params)
-    if not ok2:
-        return False, msg2
-
-    return True, "{} | {}".format(msg1, msg2)
 
 
 if __name__ == "__main__":
-    # Quick test with defaults
-    test_params = {
-        "orientation_type": "textured",
-        "fiber_direction":  [1, 1, 1],
-        "sigma_spread":     10.0,
-        "s0":               120.0,
-        "h0":               1500.0,
-        "ss":               450.0,
-        "n":                3.0,
-    }
-    ok, msg = inject_all(test_params)
+    ok, msg = inject_microstructure_params(
+        {"orientation_type": "textured", "fiber_direction": [1, 1, 0], "sigma_spread": 46.0})
     print(msg)

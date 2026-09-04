@@ -87,11 +87,13 @@ for i = 1:3
 
     pre_max  = max(pre_pf.intensities(:));
     post_max = max(post_pf.intensities(:));
-    cmax     = ceil(max(pre_max, post_max));
-    crange   = [0, cmax];
+    % Fixed colour range for ALL pole figures (pre/post, every {hkl}), matching
+    % the paper's Fig. 2c scale (0-3.5 MRD) so every figure is directly
+    % comparable and on the same scale as Reference_Plot_figures.png.
+    crange   = [0, 3.5];
 
-    fprintf('  %s: pre_max=%.2f  post_max=%.2f  shared_range=[0, %d]\n', ...
-        hkl_titles{i}, pre_max, post_max, cmax);
+    fprintf('  %s: pre_max=%.2f  post_max=%.2f  fixed_range=[0, 3.5]\n', ...
+        hkl_titles{i}, pre_max, post_max);
 
     % --- PRE figure ---
     fig_pre = figure('Visible', 'off'); clf;
@@ -123,3 +125,37 @@ end
 fprintf('\nAll pole figures saved with matched color ranges.\n');
 fprintf('Pre  : %s\n', fig_dir_pre);
 fprintf('Post : %s\n', fig_dir_post);
+
+% =========================================================================
+%% Individual post-deformation tiles for the paper-comparison figure
+% One tight PNG per {hkl} in paper column order {111},{100},{110}, upper
+% hemisphere, fixed [0 3.5] MRD, no colorbar -- consumed by
+% tools/texture_vs_paper.py to build the aligned this-study-vs-paper figure.
+% =========================================================================
+tile_hkl   = {Miller(1,1,1,cs), Miller(1,0,0,cs), Miller(1,1,0,cs)};
+tile_names = {'111', '100', '110'};
+for i = 1:3
+    fig_t = figure('Visible','off','Position',[100 100 460 460],'Color','w');
+    plotPDF(post_odf, tile_hkl{i}, 'smooth', 'resolution', 2*degree, 'upper');
+    setColorRange([0 3.5]);
+    % remove MTEX axis-direction glyphs (X/Y/Z) and any (hkl) label so the tile
+    % is just the bare pole-figure disk for the paper-comparison figure
+    delete(findall(fig_t, 'Type', 'text'));
+    tile_fname = fullfile(fig_dir_pre, ['tile_mine_' tile_names{i} '.png']);
+    print(fig_t, tile_fname, '-dpng', '-r150');
+    close(fig_t);
+    fprintf('  Saved tile_mine_%s.png\n', tile_names{i});
+end
+
+% Individual PRE-deformation (recovered initial texture) tiles, same style,
+% for the supplementary three-row figure (initial -> deformed -> reference).
+for i = 1:3
+    fig_i = figure('Visible','off','Position',[100 100 460 460],'Color','w');
+    plotPDF(pre_odf, tile_hkl{i}, 'smooth', 'resolution', 2*degree, 'upper');
+    setColorRange([0 3.5]);
+    delete(findall(fig_i, 'Type', 'text'));
+    tile_fname = fullfile(fig_dir_pre, ['tile_init_' tile_names{i} '.png']);
+    print(fig_i, tile_fname, '-dpng', '-r150');
+    close(fig_i);
+    fprintf('  Saved tile_init_%s.png\n', tile_names{i});
+end

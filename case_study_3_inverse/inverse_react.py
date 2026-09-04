@@ -4,7 +4,7 @@
 inverse_react.py -- entry point for the Case Study 3 inverse-texture agent.
 
 The LLM selects a search strategy from the optimizer repository and launches it;
-the optimizer recovers the initial texture that reproduces the target Fig. 10
+the optimizer recovers the initial texture that reproduces the target Fig. 2c
 compression texture. Mirrors the Case Study 1 calibration entry point.
 
 Usage:
@@ -28,9 +28,9 @@ from agents.inverse_agent import InverseTextureAgent
 
 DEFAULT_QUERY = (
     "Recover the initial crystallographic texture of the copper polycrystal that, "
-    "after 40% uniaxial compression along Z, reproduces the target deformation "
-    "texture in fig10_targets.json (the {100}, {110}, {111} pole figures with a "
-    "central {110} compression fibre). Select the most sample-efficient search "
+    "after uniaxial compression along Z to true strain ~1.0, reproduces the target "
+    "deformation texture in fig2c_targets.json (the {111}, {100}, {110} pole figures "
+    "with a central {110} compression fibre). Select the most sample-efficient search "
     "strategy and use a budget of 15 simulations. Then interpret the recovered "
     "initial texture."
 )
@@ -43,8 +43,8 @@ def main():
     print("  Cu Inverse-Texture Agent (Case Study 3)")
     print("  Model     : GPT-4o")
     print("  Role      : LLM selects the search strategy; optimizer searches")
-    print("  Target    : Fig. 10 compression texture (fig10_targets.json)")
-    print("  Budget    : 15 simulations | refine factor 2")
+    print("  Target    : Fig. 2c compression texture (fig2c_targets.json)")
+    print("  Budget    : 15 simulations | rate-dependent Taylor (m=77)")
     print("=" * 65)
 
     agent = InverseTextureAgent()

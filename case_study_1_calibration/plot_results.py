@@ -134,7 +134,13 @@ print("Curves loaded: {}".format(len(all_curves)))
 fig1, ax = plt.subplots(figsize=(8, 6))
 ax.plot(exp_strain, exp_stress, "ko-", markersize=5, linewidth=1.5,
         label="Experiment (SS316L)")
-ax.plot(sim_strain, sim_stress, "r-", linewidth=2,
+# Force the simulation curve to start from the origin (0, 0)
+sim_strain_plot = np.asarray(sim_strain, dtype=float)
+sim_stress_plot = np.asarray(sim_stress, dtype=float)
+if sim_strain_plot.size == 0 or sim_strain_plot[0] != 0.0 or sim_stress_plot[0] != 0.0:
+    sim_strain_plot = np.insert(sim_strain_plot, 0, 0.0)
+    sim_stress_plot = np.insert(sim_stress_plot, 0, 0.0)
+ax.plot(sim_strain_plot, sim_stress_plot, "r-", linewidth=2,
         label="Best simulation (RMSE={:.2f} MPa, MAPE={:.2f}%)".format(
               BEST["rmse"], BEST["mape"]))
 ax.set_xlabel("True Strain")
@@ -144,6 +150,8 @@ ax.set_title("Best Fit — System 3 (Semi-Autonomous Agent)\n"
              BEST["s0"], BEST["h0"], BEST["ss"], BEST["n"]))
 ax.legend(fontsize=9)
 ax.grid(True, alpha=0.3)
+ax.set_xlim(left=0)   # axes begin exactly at the origin
+ax.set_ylim(bottom=0)
 fig1.tight_layout()
 fig1.savefig(os.path.join(OUT_DIR, "S3_best_fit.png"), dpi=150, bbox_inches="tight")
 plt.close(fig1)
@@ -155,7 +163,7 @@ fig2.suptitle("SS316L Calibration — System 3 (Semi-Autonomous Agent)",
               fontsize=12, fontweight="bold")
 
 ax = axes[0]
-ax.semilogy(iterations, rmse_vals, "b.-", markersize=4, label="RMSE per iteration")
+ax.plot(iterations, rmse_vals, "b.-", markersize=4, label="RMSE per iteration")
 ax.axhline(5.0, color="g", linestyle="--", label="Target 5 MPa")
 ax.scatter([best_iter], [best_rmse], color="red", zorder=5, s=100,
            label="Best: {:.2f} MPa (iter {})".format(best_rmse, best_iter))

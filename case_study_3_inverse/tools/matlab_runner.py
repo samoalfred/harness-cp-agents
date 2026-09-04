@@ -57,7 +57,7 @@ def run_microstructure_gen(timeout=TIMEOUT_SEC):
 
     print("[MATLAB] Running microstructure_gen.m ...")
     print("[MATLAB] Working dir: {}".format(matlab_dir_win))
-    print("[MATLAB] This may take a minute or two (grid size set in microstructure_gen.m).")
+    print("[MATLAB] This may take several minutes for a 300x300x300 grid.")
 
     t0 = time.time()
     try:

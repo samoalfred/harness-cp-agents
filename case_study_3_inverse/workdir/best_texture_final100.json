@@ -1,0 +1,35 @@
+{
+  "mode": "f110",
+  "fiber": [
+    1,
+    1,
+    0
+  ],
+  "sigma": 27.11764705882353,
+  "substeps": 100,
+  "loss": 0.2622699065846109,
+  "parts": {
+    "100": {
+      "peak": 2.18,
+      "center": 0.04,
+      "tgt_peak": 2.35,
+      "tgt_center": 0.3,
+      "contrib": 0.084
+    },
+    "110": {
+      "peak": 3.73,
+      "center": 3.11,
+      "tgt_peak": 3.5,
+      "tgt_center": 3.3,
+      "contrib": 0.12
+    },
+    "111": {
+      "peak": 2.27,
+      "center": 0.12,
+      "tgt_peak": 2.5,
+      "tgt_center": 0.3,
+      "contrib": 0.058
+    }
+  },
+  "orientations": "orientations_post_deformation_best100.csv"
+}

@@ -1,12 +1,17 @@
 """
-Configuration for SS316L System 3 (Semi-Autonomous LLM Agent).
+Configuration for CS2_Texture_Evolution (goal-driven ReAct agent).
+
+Reproduces the OFHC-copper compression benchmark of Yaghoobi et al. (2022)
+with PRISMS-Plasticity TM (rate-independent, Taylor model, velocity-gradient
+BC). The reference stress-strain curve is the digitized PRISMS-Plasticity TM
+curve from that paper.
 """
 
 import os
 
 BASE_DIR         = os.path.dirname(os.path.abspath(__file__))
 PRM_FILE         = os.path.join(BASE_DIR, "prm.prm")
-EXP_DATA_FILE    = os.path.join(BASE_DIR, "SS316L_experiment.txt")
+EXP_DATA_FILE    = os.path.join(BASE_DIR, "Yaghoobi et al. (2022).csv")
 SIM_RESULTS_FILE = os.path.join(BASE_DIR, "results", "stressstrain.txt")
 WORKDIR          = os.path.join(BASE_DIR, "workdir")
 LOG_FILE         = os.path.join(WORKDIR, "optimization_results.csv")
