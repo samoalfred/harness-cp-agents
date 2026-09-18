@@ -93,29 +93,18 @@ else:
            ("configured path missing: %s" % matlab_exe) if matlab_exe
            else "not found; set MATLAB_EXE in tools/matlab_runner.py (MATLAB needs a license)")
 
-# 8. MTEX startup_mtex.m (parse the run(...) path from a matlab/*.m script)
-mtex_path = None
-for c in cases:
-    mdir = os.path.join(ROOT, c, "matlab")
-    if os.path.isdir(mdir):
-        for f in sorted(os.listdir(mdir)):
-            if f.endswith(".m"):
-                txt = open(os.path.join(mdir, f), encoding="utf-8", errors="ignore").read()
-                m = re.search(r"run\(['\"](.+?startup_mtex\.m)['\"]\)", txt)
-                if m:
-                    mtex_path = m.group(1)
-                    break
-    if mtex_path:
-        break
-if mtex_path:
-    exists = os.path.isfile(mtex_path)
-    if not exists and len(mtex_path) > 2 and mtex_path[1:3] == ":\\":   # Windows path -> WSL mount
-        exists = os.path.isfile("/mnt/" + mtex_path[0].lower() + mtex_path[2:].replace("\\", "/"))
+# 8. MTEX (resolved from the MTEX_ROOT environment variable; the matlab/*.m
+#    scripts fall back to a local default when MTEX_ROOT is unset)
+mtex_root = os.environ.get("MTEX_ROOT")
+if mtex_root:
+    mtex_start = os.path.join(mtex_root, "startup_mtex.m")
+    exists = os.path.isfile(mtex_start)
     report(OK if exists else WARN, "MTEX (startup_mtex.m)",
-           mtex_path + ("" if exists else "  (path not found; edit the run() line in matlab/*.m)"))
+           mtex_start + ("" if exists else "  (MTEX_ROOT set, but startup_mtex.m not found there)"))
 else:
     report(WARN, "MTEX (startup_mtex.m)",
-           "path not found in matlab/*.m; ensure MTEX 6.0.0 is installed and referenced")
+           "MTEX_ROOT not set; the matlab/*.m scripts will use their fallback path. "
+           "Set MTEX_ROOT to your MTEX installation directory for portability.")
 
 # summary
 print("-" * 60)

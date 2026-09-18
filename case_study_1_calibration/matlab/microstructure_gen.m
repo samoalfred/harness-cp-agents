@@ -10,8 +10,15 @@
 format compact; clear; close all;
 tStart = tic;
 
-% Initialize MTEX (required for IPF coloring and pole figures)
-run('C:\Users\samoa\OneDrive - Umich\Documents\MATLAB\mtex-6.0.0\mtex-6.0.0\startup_mtex.m');
+% Initialize MTEX. Set the MTEX_ROOT environment variable to your MTEX
+% installation directory (the folder containing startup_mtex.m), or edit the
+% fallback path below.
+mtex_root = getenv('MTEX_ROOT');
+if isempty(mtex_root)
+    mtex_root = fullfile(getenv('USERPROFILE'), 'OneDrive - Umich', ...
+        'Documents', 'MATLAB', 'mtex-6.0.0', 'mtex-6.0.0');
+end
+run(fullfile(mtex_root, 'startup_mtex.m'));
 
 %% 1. Configuration & Parameters
 % NOTE: Calibration-scale configuration. A small 32x32x32 grid is used so

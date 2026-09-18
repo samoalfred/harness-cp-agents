@@ -39,7 +39,7 @@ from openai import OpenAI
 # CP_AGENTS_FCC environment variable to point at your local checkout.
 FCC = os.environ.get(
     "CP_AGENTS_FCC",
-    "/home/samoalfred/candi/plasticity/applications/crystalPlasticity/fcc")
+    os.path.expanduser("~/candi/plasticity/applications/crystalPlasticity/fcc"))
 CS2 = os.path.join(FCC, "CS2_Texture_Evolution")
 MAX_ITERATIONS = 25
 

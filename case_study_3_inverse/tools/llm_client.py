@@ -13,7 +13,7 @@ def _get_client():
         api_key = os.environ.get("OPENAI_API_KEY")
         if not api_key:
             raise EnvironmentError("OPENAI_API_KEY environment variable not set.")
-        _client = OpenAI(api_key=api_key)
+        _client = OpenAI(api_key=api_key, base_url=os.environ.get("OPENAI_BASE_URL") or None)
     return _client
 
 

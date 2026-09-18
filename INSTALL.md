@@ -24,7 +24,8 @@ cd harness-cp-agents
 Then edit machine-specific paths:
 - `SIM_COMMAND` (PRISMS `main`) in each `case_study_*/config_semi.py` if not `../../main`.
 - `MATLAB_EXE` in each `case_study_*/tools/matlab_runner.py`.
-- The `run('.../startup_mtex.m')` line in each `case_study_*/matlab/*.m`.
+- `MTEX_ROOT` (environment variable) pointing at your MTEX install; the
+  `case_study_*/matlab/*.m` scripts read it and fall back to an editable default.
 
 ## 3. Python environment
 ```bash
@@ -36,8 +37,12 @@ pip install -r requirements.txt
 ## 4. Environment variables
 ```bash
 export OPENAI_API_KEY="sk-..."
+export MTEX_ROOT="/path/to/mtex-6.0.0"       # folder containing startup_mtex.m
 export LD_LIBRARY_PATH=/path/to/dealii-candi/symengine-0.8.1/lib:$LD_LIBRARY_PATH
 ```
+Prefer a non-OpenAI provider (e.g., Anthropic Claude)? The agents also honor
+`OPENAI_BASE_URL`, so any OpenAI-compatible endpoint works without code changes.
+See "Using a different LLM provider" in `README.md`.
 
 ## 5. Verify everything is in place
 ```bash

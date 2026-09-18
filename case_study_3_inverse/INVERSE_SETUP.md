@@ -84,7 +84,7 @@ Agent-driven (narrative parity with CS1):
 ```
 cd ~/candi/plasticity/applications/crystalPlasticity/fcc/CS3_Inverse_Problem
 export OPENAI_API_KEY='sk-...'
-export LD_LIBRARY_PATH=/home/samoalfred/dealii-candi/symengine-0.8.1/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$HOME/dealii-candi/symengine-0.8.1/lib:$LD_LIBRARY_PATH
 python3.7 -u inverse_react.py 2>&1 | tee inverse_run.log
 ```
 

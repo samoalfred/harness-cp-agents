@@ -83,7 +83,7 @@ required; the agents cannot run end to end without every one of them.**
 | 2 | **PRISMS-Plasticity**, built from source (needs **deal.II** + **SymEngine**) | free / open-source | the CP-FEM simulations (the `main` executable) |
 | 3 | **MATLAB** (developed with R2025b) | **commercial — a valid MATLAB license is required** | synthetic microstructure generation and pole figures |
 | 4 | **MTEX 6.0.0** MATLAB toolbox | free / open-source | crystallographic texture analysis inside MATLAB |
-| 5 | **OpenAI API key** with **GPT-4o** access | paid (API usage is billed) | the LLM agent |
+| 5 | **OpenAI API key** with **GPT-4o** access (or an OpenAI-compatible endpoint / another provider, see below) | paid (API usage is billed) | the LLM agent |
 | 6 | **Python 3.7+** and the packages in `requirements.txt` | free | the agent and its Python tooling |
 
 The detailed setup for each is below.
@@ -108,9 +108,16 @@ These are **not** Python packages and must be installed separately.
 2. **MATLAB** (developed with R2025b). **MATLAB is commercial software and requires a
    valid, activated license** — it is not free and is not bundled here. It is used to
    generate the synthetic polycrystals and plot pole figures. On top of MATLAB you also
-   need the **MTEX 6.0.0** toolbox (item 3). The MATLAB executable path and the MTEX
-   `startup_mtex.m` path are set in `tools/matlab_runner.py` and the MTEX `.m` scripts,
-   so **edit these to match your machine.**
+   need the **MTEX 6.0.0** toolbox (item 3). The MATLAB executable path is set in
+   `tools/matlab_runner.py`. The MTEX location is read from the **`MTEX_ROOT`**
+   environment variable by every `matlab/*.m` script; set it to the folder that
+   contains `startup_mtex.m`, for example:
+   ```bash
+   export MTEX_ROOT="/path/to/mtex-6.0.0"      # Linux/WSL
+   # Windows (PowerShell):  setx MTEX_ROOT "C:\path\to\mtex-6.0.0"
+   ```
+   If `MTEX_ROOT` is unset, the scripts fall back to a default install location that
+   you can edit at the top of each `matlab/*.m` file.
 
 3. **MTEX 6.0.0** toolbox (<https://mtex-toolbox.github.io/>) installed inside MATLAB.
    Free and open-source, but it runs on top of a licensed MATLAB.
@@ -120,6 +127,9 @@ These are **not** Python packages and must be installed separately.
    ```bash
    export OPENAI_API_KEY="sk-..."
    ```
+   Using a different provider (for example **Anthropic Claude**) is supported; see
+   [Using a different LLM provider](#using-a-different-llm-provider-eg-anthropic-claude)
+   under Configuration.
 
 5. **Python 3.7+** and the packages in `requirements.txt` (see the Installation
    section below).
@@ -168,7 +178,42 @@ Each case study has a `config_semi.py`. Review before running:
 - CS1: `PARAMETERS` (search bounds), `MAX_EVALUATIONS`, `RMSE_THRESHOLD`, `MAPE_THRESHOLD`.
 - CS3: fibre-spread bounds and the 15-evaluation budget (in `inverse_search.py`).
 
-Also edit the MATLAB / MTEX paths in `tools/matlab_runner.py` and the `matlab/*.m` scripts.
+Also set the MATLAB executable in `tools/matlab_runner.py` and the `MTEX_ROOT`
+environment variable for the `matlab/*.m` scripts (see the Prerequisites section).
+
+### Using a different LLM provider (e.g., Anthropic Claude)
+
+By default the agents call **OpenAI GPT-4o** through OpenAI's function-calling
+interface (`tools=TOOL_SCHEMAS` in `agents/*.py`), and the tool schemas are written
+in the OpenAI function-calling format. If you have a key from a different provider,
+you have two options.
+
+**Option A — an OpenAI-compatible endpoint (no code changes).** The agents build the
+client with `base_url=os.environ.get("OPENAI_BASE_URL")`, so any endpoint that speaks
+the OpenAI Chat Completions + function-calling protocol works by setting two
+variables and the model name in `config_semi.py`:
+```bash
+export OPENAI_API_KEY="your-key-for-that-endpoint"
+export OPENAI_BASE_URL="https://your-openai-compatible-endpoint/v1"
+```
+This covers Azure OpenAI, OpenRouter, local servers (vLLM, Ollama in OpenAI-compatible
+mode), and gateways such as **LiteLLM**. To use **Anthropic Claude** this way, run a
+proxy that exposes Claude behind an OpenAI-compatible API (for example, the LiteLLM
+proxy), point `OPENAI_BASE_URL` at it, set `OPENAI_MODEL` in `config_semi.py` to the
+Claude model id, and provide your `ANTHROPIC_API_KEY` to the proxy. No changes to the
+agent code are needed.
+
+**Option B — the native Anthropic SDK (requires code changes).** Anthropic's tool-use
+API differs from OpenAI's (the system prompt is a separate argument, and tool calls
+are returned as `tool_use` content blocks with matching `tool_result` blocks). To use
+it natively you would `pip install anthropic`, set `ANTHROPIC_API_KEY`, and adapt the
+loop in each `agents/*.py`: replace the `OpenAI(...)` client and
+`client.chat.completions.create(..., tools=TOOL_SCHEMAS)` call with
+`Anthropic(...).messages.create(...)`, convert `TOOL_SCHEMAS` to Anthropic's tool
+schema, and parse `tool_use`/`tool_result` blocks instead of `message.tool_calls`.
+See the Anthropic tool-use documentation for the exact message shapes.
+
+For most users, **Option A is the simplest** and keeps the agent code unchanged.
 
 ---
 

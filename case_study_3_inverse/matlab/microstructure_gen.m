@@ -17,7 +17,15 @@
 %          (Juyoung Jeong / Veera Sundararaghavan) for CS2_Texture_Evolution_MicroGen.
 
 format compact; clear; close all;
-run('C:\Users\samoa\OneDrive - Umich\Documents\MATLAB\mtex-6.0.0\mtex-6.0.0\startup_mtex.m');
+% Initialize MTEX. Set the MTEX_ROOT environment variable to your MTEX
+% installation directory (the folder containing startup_mtex.m), or edit the
+% fallback path below.
+mtex_root = getenv('MTEX_ROOT');
+if isempty(mtex_root)
+    mtex_root = fullfile(getenv('USERPROFILE'), 'OneDrive - Umich', ...
+        'Documents', 'MATLAB', 'mtex-6.0.0', 'mtex-6.0.0');
+end
+run(fullfile(mtex_root, 'startup_mtex.m'));
 
 %% 1. Configuration (paper Application 1)
 rng_seed         = 0;          % fixed seed -> reproducible RVE (same texture every run)

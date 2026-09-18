@@ -2,7 +2,15 @@
 % Peak intensity, central (Z) intensity, and an azimuthal-asymmetry index
 % for {100},{110},{111}. All in MRD on the same ODF (halfwidth 8 deg).
 clear; close all;
-run('C:\Users\samoa\OneDrive - Umich\Documents\MATLAB\mtex-6.0.0\mtex-6.0.0\startup_mtex.m');
+% Initialize MTEX. Set the MTEX_ROOT environment variable to your MTEX
+% installation directory (the folder containing startup_mtex.m), or edit the
+% fallback path below.
+mtex_root = getenv('MTEX_ROOT');
+if isempty(mtex_root)
+    mtex_root = fullfile(getenv('USERPROFILE'), 'OneDrive - Umich', ...
+        'Documents', 'MATLAB', 'mtex-6.0.0', 'mtex-6.0.0');
+end
+run(fullfile(mtex_root, 'startup_mtex.m'));
 script_dir = fileparts(mfilename('fullpath'));
 cs = crystalSymmetry('m-3m'); ss = specimenSymmetry('triclinic');
 setMTEXpref('xAxisDirection','east'); setMTEXpref('zAxisDirection','outOfPlane');
