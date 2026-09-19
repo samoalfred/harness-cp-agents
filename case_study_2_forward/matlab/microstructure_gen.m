@@ -10,6 +10,13 @@
 format compact; clear; close all;
 tStart = tic;
 
+% Fix the random-number stream so the generated microstructure and the random
+% initial texture are reproducible run-to-run (and match the frozen realization
+% shipped as orientations_FCC_400grains.txt). MATLAB -batch already starts from a
+% default state, but setting it explicitly guards against MATLAB-version changes
+% and against running inside an already-open session.
+rng(0, 'twister');
+
 % Initialize MTEX. Set the MTEX_ROOT environment variable to your MTEX
 % installation directory (the folder containing startup_mtex.m), or edit the
 % fallback path below.

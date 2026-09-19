@@ -281,7 +281,10 @@ python3 run_pipeline.py --query "Generate a random-texture Cu polycrystal, compr
 ```
 The agent recovers the eight-step workflow, runs the compression, and produces the
 stress-strain comparison (`results/stressstrain.txt`) and pre/post pole figures
-(`matlab/figures/`).
+(`matlab/figures/`). The microstructure generator (`matlab/microstructure_gen.m`)
+fixes its random seed (`rng(0,'twister')`), so the generated ~400-grain random
+texture is reproducible and matches the frozen realization in
+`orientations_FCC_400grains.txt`.
 
 ### CS3 — inverse texture recovery (Cu)
 ```bash
