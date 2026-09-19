@@ -10,13 +10,14 @@ Code accompanying the paper:
 A single **harness-engineered, ReAct-style LLM agent** that drives full crystal
 plasticity finite element (CP-FEM) workflows from a one-sentence natural-language
 goal. The *same* harness (system prompt + tool schemas + dispatcher + iteration
-loop) is applied unchanged to three structurally different problems:
+loop) is applied unchanged to four structurally different problems:
 
 | | Case study | Material | Task |
 |---|---|---|---|
 | **CS1** | Parameter calibration | SS316L | Recover four hardening parameters that fit an experimental tensile curve. The agent selects a numerical optimizer and delegates the search. |
 | **CS2** | Forward validation | OFHC copper | With fixed parameters, run one compression simulation and validate the flow response and deformation texture against a published benchmark. |
 | **CS3** | Inverse texture recovery | OFHC copper | Given a target deformation texture, search over the initial microstructural texture to reproduce it. |
+| **CS4** | Multi-pass evolution | ZX31 (Mg-3Zn-0.3Ca), HCP | Chain five rate-dependent plane-strain-compression passes of hot rolling, carrying the deformed texture forward pass to pass, and reproduce the experimentally observed weakened, split basal texture. |
 
 Only the **tool set** and the **user query** change between case studies; the agent
 architecture does not. See `docs/CS1_Map.png`, `CS2_Map.png`, `CS3_Map.png` for the
@@ -51,6 +52,13 @@ per-case pipeline structure.
 │   ├── inverse_search.py         #   Bayesian optimization over the initial texture
 │   ├── config_semi.py, agents/, tools/
 │   └── fig2c_targets.json        #   digitized target pole-figure features
+├── case_study_4_multipass/       # CS4: ZX31 Mg five-pass rolling texture evolution
+│   ├── run_pipeline.py           #   entry point (goal-driven ReAct, chains 5 passes)
+│   ├── config.py                 #   alloy params, reference paths, DEFAULT_QUERY
+│   ├── prm.prm                   #   rate-dependent Table-1 350C deck (main_ratedep)
+│   ├── orientations_initial.txt  #   random as-cast start (pass-1 input)
+│   ├── agents/, tools/, matlab/  #   react_agent + run_pass/compare/analyze tools
+│   └── reference/                #   authors' 1-pass stress, 5-pass texture, experiment PNG
 ├── experiments/                  # Section 3.5: reliability & robustness studies
 │   ├── reliability/              #   correct-sequence + termination over repeated runs
 │   ├── ablation/                 #   2x2 tool-name x tool-description ablation
@@ -80,9 +88,9 @@ required; the agents cannot run end to end without every one of them.**
 | # | Requirement | Cost | Needed for |
 |---|---|---|---|
 | 1 | **Linux or WSL** (developed on WSL Ubuntu 18.04) | free | running PRISMS-Plasticity, a Linux / deal.II code. **Native Windows without WSL will not work.** |
-| 2 | **PRISMS-Plasticity**, built from source (needs **deal.II** + **SymEngine**) | free / open-source | the CP-FEM simulations (the `main` executable) |
+| 2 | **PRISMS-Plasticity**, built from source (needs **deal.II** + **SymEngine**) | free / open-source | the CP-FEM simulations (the `main` executable; CS4 also needs the rate-dependent build `main_ratedep`) |
 | 3 | **MATLAB** (developed with R2025b) | **commercial — a valid MATLAB license is required** | synthetic microstructure generation and pole figures |
-| 4 | **MTEX 6.0.0** MATLAB toolbox | free / open-source | crystallographic texture analysis inside MATLAB |
+| 4 | **MTEX** MATLAB toolbox (6.0.0 for CS1–CS3; 6.2.beta.3 for CS4) | free / open-source | crystallographic texture analysis inside MATLAB |
 | 5 | **OpenAI API key** with **GPT-4o** access (or an OpenAI-compatible endpoint / another provider, see below) | paid (API usage is billed) | the LLM agent |
 | 6 | **Python 3.7+** and the packages in `requirements.txt` | free | the agent and its Python tooling |
 
@@ -283,8 +291,22 @@ optimum's deformed texture and pole figures:
 python3 run_iter3.py
 ```
 
+### CS4 — multi-pass texture evolution (ZX31 Mg)
+```bash
+cd case_study_4_multipass
+export MTEX_ROOT="/path/to/mtex-6.2.beta.3"
+python3 run_pipeline.py
+```
+The agent chains five rate-dependent plane-strain-compression passes, carrying each
+pass's deformed texture forward as the next pass's input, then compares the pass-1
+flow stress and the pass-5 (0001) texture against the reference simulation and the
+experiment. This case requires the **rate-dependent** solver binary
+(`../../main_ratedep`, set in `config.py`) and MTEX 6.2.beta.3; see
+`case_study_4_multipass/README.md`.
+
 Each case study is expensive (each forward evaluation is a full CP-FEM run). CS1
-completes in tens of evaluations; CS2 is a single run; CS3 uses 15 evaluations.
+completes in tens of evaluations; CS2 is a single run; CS3 uses 15 evaluations; CS4
+runs five chained passes (roughly one hour per pass at 1728 grains).
 
 ---
 
