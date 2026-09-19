@@ -286,14 +286,15 @@ stress-strain comparison (`results/stressstrain.txt`) and pre/post pole figures
 ### CS3 — inverse texture recovery (Cu)
 ```bash
 cd case_study_3_inverse
-python3 inverse_react.py "Recover the initial texture that reproduces fig10_targets.json after 40% compression; use a budget of 15 simulations."
+python3 inverse_react.py            # uses the default query (recover the initial texture)
 ```
-The agent selects Bayesian optimization and searches over the initial texture.
-Output: `workdir/inverse_log.csv` (15-evaluation history),
-`workdir/best_texture.json` (recovered optimum). To regenerate the recovered
-optimum's deformed texture and pole figures:
+The agent selects Bayesian optimization and searches over the initial texture to
+reproduce the target deformation texture (`fig2c_targets.json`) after compression to
+true strain ~1.0. Output: `workdir/inverse_log.csv` (15-evaluation history),
+`workdir/best_texture.json` (recovered optimum). To re-run the recovered optimum at
+full Taylor substeps:
 ```bash
-python3 run_iter3.py
+python3 run_best.py
 ```
 
 ### CS4 — multi-pass texture evolution (ZX31 Mg)

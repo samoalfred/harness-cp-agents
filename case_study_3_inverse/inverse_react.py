@@ -29,8 +29,8 @@ from agents.inverse_agent import InverseTextureAgent
 DEFAULT_QUERY = (
     "Recover the initial crystallographic texture of the copper polycrystal that, "
     "after uniaxial compression along Z to true strain ~1.0, reproduces the target "
-    "deformation texture in fig2c_targets.json (the {111}, {100}, {110} pole figures "
-    "with a central {110} compression fibre). Select the most sample-efficient search "
+    "deformation texture (the {111}, {100}, {110} pole figures "
+    "with a central {110} compression fiber). Select the most sample-efficient search "
     "strategy and use a budget of 15 simulations. Then interpret the recovered "
     "initial texture."
 )
