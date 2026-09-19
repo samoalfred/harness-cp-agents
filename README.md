@@ -21,7 +21,8 @@ loop) is applied unchanged to four structurally different problems:
 
 Only the **tool set** and the **user query** change between case studies; the agent
 architecture does not. See `docs/CS1_Map.png`, `CS2_Map.png`, `CS3_Map.png` for the
-per-case pipeline structure.
+per-case pipeline structure; CS4 chains five passes of the CS2-style forward
+pipeline, so it reuses that structure (see `case_study_4_multipass/README.md`).
 
 ---
 
@@ -177,14 +178,18 @@ h5py>=3.8
 
 ## Configuration
 
-Each case study has a `config_semi.py`. Review before running:
+Each case study has a config file (`config_semi.py` for CS1–CS3, `config.py` for
+CS4). Review before running:
 
-- `SIM_COMMAND` — path to the PRISMS-Plasticity `main` binary (default `../../main prm.prm`).
+- `SIM_COMMAND` — path to the PRISMS-Plasticity binary (default `../../main prm.prm`;
+  CS4 uses the rate-dependent `../../main_ratedep`).
 - `SIM_TIMEOUT_SEC` — per-simulation wall-clock cap (default 7200 s).
 - `OPENAI_MODEL`, `TEMPERATURE`, `MAX_TOKENS` — LLM settings (default `gpt-4o`, 0.0–0.1, 1024).
 - `REFINE_FACTOR` — FE mesh refinement (2^n elements per dimension).
 - CS1: `PARAMETERS` (search bounds), `MAX_EVALUATIONS`, `RMSE_THRESHOLD`, `MAPE_THRESHOLD`.
 - CS3: fibre-spread bounds and the 15-evaluation budget (in `inverse_search.py`).
+- CS4 (`config.py`): `ALLOY`, `SUBDIV` (grain count `SUBDIV^3`; 12 -> 1728),
+  `SUBSTEPS`, `N_PASSES`, and the `REF_*` reference-data paths.
 
 Also set the MATLAB executable in `tools/matlab_runner.py` and the `MTEX_ROOT`
 environment variable for the `matlab/*.m` scripts (see the Prerequisites section).
@@ -313,9 +318,11 @@ runs five chained passes (roughly one hour per pass at 1728 grains).
 ## Reproducing the paper figures
 
 The MTEX pole figures are produced by the scripts in `matlab/` (e.g.
-`prepost25.m`, `compare_pf.m`, `features25.m`), which render on the reference
-0–2.5 MRD scale. The plotting utilities `plot_results.py` regenerate the
-stress-strain and convergence figures from the logged output.
+`prepost25.m`, `compare_pf.m`, `features25.m` for CS1–CS3, and `pole_figure.m` for
+CS4), which render on the reference intensity scale. The plotting utilities
+`plot_results.py` regenerate the stress-strain and convergence figures from the
+logged output. For CS4, `matlab/pole_figure.m` computes the (0001) pole figures and
+peak intensities per pass and writes `texture_results.txt`.
 
 ---
 

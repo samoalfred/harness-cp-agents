@@ -60,6 +60,9 @@ cd case_study_2_forward && python3 run_pipeline.py
 
 # CS3 - Cu inverse texture recovery
 cd case_study_3_inverse && python3 inverse_react.py "Recover the initial texture that reproduces fig10_targets.json after 40% compression; budget 15 simulations."
+
+# CS4 - ZX31 Mg five-pass rolling texture evolution (needs main_ratedep + MTEX 6.2.beta.3)
+cd case_study_4_multipass && export MTEX_ROOT="/path/to/mtex-6.2.beta.3" && python3 run_pipeline.py
 ```
 
 Each forward evaluation is a full CP-FEM run, so expect minutes-to-hours depending on
