@@ -1,8 +1,8 @@
-# Harness-Engineered LLM Agents for Multiscale Modeling: Automating Crystal Plasticity Simulation Workflows
+# CP-Agent: A Harness-Engineered Agent for Crystal Plasticity Simulation Workflows
 
 Code accompanying the paper:
 
-> **Harness-Engineered LLM Agents for Multiscale Modeling: Automating Crystal Plasticity Simulation Workflows**
+> **CP-Agent: A Harness-Engineered Agent for Crystal Plasticity Simulation Workflows**
 > Samuel Onimpa Alfred, Abhishek Kumar, and Veera Sundararaghavan.
 > Department of Aerospace Engineering, University of Michigan, Ann Arbor.
 > Manuscript, 2026 (DOI to be added upon publication).
@@ -303,7 +303,7 @@ If you use this code, please cite the paper (see `CITATION.cff`):
 
 ```bibtex
 @article{alfred2026harness,
-  title   = {Harness-Engineered LLM Agents for Multiscale Modeling: Automating Crystal Plasticity Simulation Workflows},
+  title   = {CP-Agent: A Harness-Engineered Agent for Crystal Plasticity Simulation Workflows},
   author  = {Alfred, Samuel Onimpa and Kumar, Abhishek and Sundararaghavan, Veera},
   journal = {Manuscript (under review)},
   year    = {2026},

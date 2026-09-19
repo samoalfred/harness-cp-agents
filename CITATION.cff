@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite both the software and the accompanying paper."
-title: "Harness-Engineered LLM Agents for Multiscale Modeling: Automating Crystal Plasticity Simulation Workflows"
+title: "CP-Agent: A Harness-Engineered Agent for Crystal Plasticity Simulation Workflows"
 authors:
   - family-names: "Alfred"
     given-names: "Samuel Onimpa"
@@ -17,7 +17,7 @@ license: MIT
 repository-code: "https://github.com/samoalfred/harness-cp-agents"
 preferred-citation:
   type: article
-  title: "Harness-Engineered LLM Agents for Multiscale Modeling: Automating Crystal Plasticity Simulation Workflows"
+  title: "CP-Agent: A Harness-Engineered Agent for Crystal Plasticity Simulation Workflows"
   authors:
     - family-names: "Alfred"
       given-names: "Samuel Onimpa"
