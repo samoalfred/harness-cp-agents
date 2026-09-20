@@ -142,22 +142,24 @@ def run_condition(client, model, kind, n, logf):
     print("CONDITION: %s   (model=%s, n=%d)" % (label, model, n))
     print("=" * 70)
     logf.write("\n=== %s (model=%s, n=%d) ===\n" % (label, model, n))
-    n_full = n_term = 0
+    n_order = n_full = n_term = 0
     for i in range(1, n + 1):
         raw, terminated = run_once(client, model, prompt, schemas, canned)
         real = [name_map.get(x, x) for x in raw]      # translate to real identity
         ordering_ok, no_unnec, fully, reason = score(real)
+        n_order += int(ordering_ok)
         n_full += int(fully)
         n_term += int(terminated)
         line = "[%s] run %2d: %-7s | seq=%s | %s" % (
             label, i, "FULL-OK" if fully else "x", " -> ".join(real), reason)
         print(line)
         logf.write(line + "\n")
-    summ = "[%s] fully-correct %d/%d (%.0f%%) | terminated %d/%d" % (
-        label, n_full, n, 100.0 * n_full / n, n_term, n)
+    summ = ("[%s] valid-order %d/%d (%.0f%%) | fully-correct %d/%d | terminated %d/%d"
+            % (label, n_order, n, 100.0 * n_order / n, n_full, n, n_term, n))
     print("-" * 70); print(summ)
     logf.write(summ + "\n")
-    return {"condition": label, "n": n, "fully": n_full, "terminated": n_term}
+    return {"condition": label, "n": n, "ordering": n_order, "fully": n_full,
+            "terminated": n_term}
 
 
 def main():
@@ -186,9 +188,13 @@ def main():
             logf.write(json.dumps(r) + "\n")
 
     print("\n=== SUMMARY (paper-ready) ===")
+    # Primary metric (paper): valid order respecting every data dependency.
+    # Stricter fully-correct count in parentheses for completeness.
     for r in results:
-        print("%-20s: correct sequence in %d/%d runs (%.0f%%)"
-              % (r["condition"], r["fully"], r["n"], 100.0 * r["fully"] / r["n"]))
+        print("%-20s: valid order (data dependencies) in %d/%d runs (%.0f%%)"
+              "  [fully-correct %d/%d]"
+              % (r["condition"], r["ordering"], r["n"],
+                 100.0 * r["ordering"] / r["n"], r["fully"], r["n"]))
     print("\nDecisive contrast: OPAQUE-FULL vs OPAQUE-ABLATED.")
     print("Full log: %s" % log_path)
 

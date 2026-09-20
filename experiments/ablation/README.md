@@ -4,12 +4,20 @@ Tests whether the agent recovers the correct CS2 execution order from the
 **prerequisite information in the tool descriptions**, by removing that
 information and measuring how sequencing degrades.
 
+> **Scenario note.** To isolate *ordering recovery* as cleanly as possible, this
+> ablation fixes the microstructure as pre-provided, so the productive chain under
+> test is `run_simulation` → `extract_post_orientations` → `generate_pole_figures`
+> → `create_comparison_figure` (with `compare_stress_strain` after the run). This
+> is a deliberately narrower setup than the main CS2 case study (which begins by
+> generating the microstructure); here the microstructure-generation tools are held
+> out so the experiment measures only the analysis-chain sequencing.
+
 ## What is held constant vs varied
 
 | Element | Setting |
 |---|---|
 | System prompt | **Minimal, goal-only** (paper §2.3) — lists tools, states no workflow. Identical in both conditions. |
-| User query | Identical in both conditions. Carries scientific intent (which case, do-not-regenerate) but **not** the step order. |
+| User query | Identical in both conditions. Carries scientific intent (which case; microstructure treated as pre-provided for this scenario) but **not** the step order. |
 | Tool descriptions | **The only variable.** FULL keeps prerequisites; ABLATED strips them. |
 
 FULL = `tool_schemas_full.py` (verbatim from `CS2_Texture_Evolution/tools/react_tools.py`).
@@ -26,11 +34,13 @@ Nothing in the real `CS2_Texture_Evolution` folder is touched or run.
 
 ## Correct-sequence rubric
 
-A run is **fully correct** iff all five productive tools are present with
+The primary metric (as reported in the paper) is whether the emitted sequence
+**respects every data dependency**: all five productive tools present with
 `run_simulation` → `extract_post_orientations` → `generate_pole_figures` →
-`create_comparison_figure`, `compare_stress_strain` after `run_simulation`, and
-**no** unnecessary `inject`/`generate_microstructure`/`convert` calls (the query
-forbids them). Ordering-only and unnecessary-call counts are reported separately.
+`create_comparison_figure`, and `compare_stress_strain` after `run_simulation`.
+For completeness the scripts also report a stricter *fully-correct* count that
+additionally requires no `inject`/`generate_microstructure`/`convert` calls (held
+out in this scenario); the two counts are logged separately.
 
 ## Run
 

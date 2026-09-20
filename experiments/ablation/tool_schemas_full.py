@@ -18,7 +18,7 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "inject_simulation_parameters",
             "description": (
-                "OPTIONAL / NOT REQUIRED FOR THIS STUDY. Overwrites the slip "
+                "OPTIONAL / NOT NEEDED IN THIS ABLATION SCENARIO. Overwrites the slip "
                 "parameters in prm.prm and the texture settings in "
                 "microstructure_gen.m. The prm.prm and microstructure in this "
                 "folder are ALREADY configured to reproduce Yaghoobi et al. "
@@ -60,13 +60,13 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "generate_microstructure",
             "description": (
-                "OPTIONAL / NOT REQUIRED FOR THIS STUDY. Runs MATLAB to generate "
-                "a NEW synthetic Cu polycrystal microstructure. This folder "
-                "already contains a pre-generated ~400-grain microstructure "
-                "(GrainId.txt + orientations_FCC_400grains.txt), so you should "
-                "NOT call this unless the user explicitly asks to generate a new "
-                "microstructure. Using the existing microstructure is the "
-                "intended path for this study."
+                "OPTIONAL / NOT NEEDED IN THIS ABLATION SCENARIO. Runs MATLAB to "
+                "generate a NEW synthetic Cu polycrystal microstructure. For this "
+                "scenario the folder already contains a pre-provided ~400-grain "
+                "microstructure (GrainId.txt + orientations_FCC_400grains.txt), so "
+                "you should NOT call this unless the user explicitly asks to "
+                "generate a new microstructure. Using the existing microstructure "
+                "is the intended path in this ablation scenario."
             ),
             "parameters": {"type": "object", "properties": {}, "required": []}
         }
@@ -77,7 +77,7 @@ TOOL_SCHEMAS = [
         "function": {
             "name": "convert_hdf5_to_prisms",
             "description": (
-                "OPTIONAL / NOT REQUIRED FOR THIS STUDY. Converts a freshly "
+                "OPTIONAL / NOT NEEDED IN THIS ABLATION SCENARIO. Converts a freshly "
                 "generated HDF5 microstructure to PRISMS input (grainID.txt, "
                 "orientations.txt) and updates prm.prm voxel dimensions. Only "
                 "needed after generate_microstructure. The PRISMS input files "
@@ -102,8 +102,9 @@ TOOL_SCHEMAS = [
                 "boundary condition (L = diag(0.0005, 0.0005, -0.001), Total time "
                 "1000), true strain reaching 1.0 (texture snapshot at t = 990 = "
                 "-99%). Produces QuadratureOutputsXXX.csv and "
-                "results/stressstrain.txt. This is the first tool to call for this "
-                "study (microstructure and prm.prm are already configured). "
+                "results/stressstrain.txt. This is the first productive tool to "
+                "call in this ablation scenario (microstructure and prm.prm are "
+                "already configured). "
                 "Runtime is ~15 min single-core."
             ),
             "parameters": {"type": "object", "properties": {}, "required": []}

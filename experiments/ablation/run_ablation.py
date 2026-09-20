@@ -229,9 +229,14 @@ def main():
             logf.write(json.dumps(r) + "\n")
 
     print("\n=== SUMMARY (paper-ready) ===")
+    # Primary metric (as reported in the paper): the sequence respects every data
+    # dependency. The stricter fully-correct count (also excludes the held-out
+    # inject/generate/convert calls) is shown in parentheses for completeness.
     for r in results:
-        print("%-8s: correct sequence in %d/%d runs (%.0f%%)"
-              % (r["label"], r["fully"], r["n"], 100.0 * r["fully"] / r["n"]))
+        print("%-8s: valid order (data dependencies) in %d/%d runs (%.0f%%)"
+              "  [fully-correct %d/%d]"
+              % (r["label"], r["ordering"], r["n"], 100.0 * r["ordering"] / r["n"],
+                 r["fully"], r["n"]))
     print("\nFull log: %s" % log_path)
 
 
