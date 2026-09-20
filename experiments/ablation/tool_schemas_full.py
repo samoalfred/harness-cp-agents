@@ -22,7 +22,7 @@ TOOL_SCHEMAS = [
                 "parameters in prm.prm and the texture settings in "
                 "microstructure_gen.m. The prm.prm and microstructure in this "
                 "folder are ALREADY configured to reproduce Yaghoobi et al. "
-                "(2022) (rate-independent Taylor model, velocity-gradient BC, "
+                "(2022) (rate-dependent Taylor model, velocity-gradient BC, "
                 "Cu slip parameters), so you normally should NOT call this. "
                 "Only call it if the user explicitly asks to change a slip "
                 "parameter; otherwise leave prm.prm untouched. Defaults below "
