@@ -63,7 +63,8 @@ pipeline, so it reuses that structure (see `case_study_4_multipass/README.md`).
 ├── experiments/                  # Section 3.5: reliability & robustness studies
 │   ├── reliability/              #   correct-sequence + termination over repeated runs
 │   ├── ablation/                 #   2x2 tool-name x tool-description ablation
-│   └── recovery/                 #   induced-fault error-recovery trace (paper S3)
+│   ├── recovery/                 #   induced-fault error-recovery trace (paper S3)
+│   └── revision_r1/              #   R1 revision experiments (autonomy, ensemble, robustness)
 └── docs/                         # structure maps, pipeline diagram
 ```
 
