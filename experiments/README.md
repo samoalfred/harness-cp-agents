@@ -9,14 +9,19 @@ production case-study folders are modified.
 
 These reliability runs cover the three repeated-run case studies (CS1–CS3), as in
 the paper. CS4 (five chained rate-dependent passes) is excluded from the 20x
-repeated-run study because a single execution is far more expensive; its result is
-reported as a single validated run in `case_study_4_multipass/`.
+repeated-run study because a single execution is far more expensive; its end-to-end
+result is reported as a single validated run in `case_study_4_multipass/`, and its
+autonomous chaining is tested separately over five dry runs in
+[`less_prescribed/cs4/`](less_prescribed/cs4/).
 
 | Folder | Paper section | What it shows | Result |
 |---|---|---|---|
 | [`ablation/`](ablation/) | 3.6.2 Sequencing ablation | 2x2 over tool-name informativeness (descriptive vs opaque) x tool-description content (full vs prerequisites removed), minimal prompt and query held fixed | valid order in **20/20** runs in all four cells |
 | [`reliability/`](reliability/) | 3.6.1 Reliability | correct sequence + clean termination over repeated runs, per case study, using each case's genuine prompt and schemas | **CS1 20/20, CS2 20/20, CS3 20/20** |
-| [`recovery/`](recovery/) | 3.6.3 Error recovery | a controlled solver fault is injected; the agent must diagnose and recover | failure injected **5/5**, recovered **5/5**; trace in `recovery/example_recovery_trace.txt` (paper Section S3) |
+| [`robustness/`](robustness/) | 3.6.3 Error recovery | three CS2 fault scenarios (missing conversion, missing microstructure input, conflicting intensity-scale constraint) run on a hard-coded script and on the agent | script fails in all three; agent recovers in **5/5** repeats of each; one example trace per scenario |
+| [`less_prescribed/`](less_prescribed/) | 3.5.3, 4.2 | the agent makes a decision the query no longer states: optimizer (CS1), strategy and budget (CS3), five-pass chaining (CS4) | Bayesian optimization **10/10** (CS1) and **10/10** with budget 15 (CS3); passes chained in order **5/5** (CS4) |
+| [`cs3_ensemble/`](cs3_ensemble/) | 3.4.5 | CS3 inverse search repeated over five random microstructure realizations, scored against the digitized and a self-consistent target | random texture is the self-consistent optimum in **2/5** realizations |
+| [`recovery/`](recovery/) | earlier version | original single-fault recovery test (superseded by `robustness/`) | failure injected **5/5**, recovered **5/5**; trace in `recovery/example_recovery_trace.txt` |
 
 ## Common setup
 

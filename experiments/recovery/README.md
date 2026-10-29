@@ -1,4 +1,8 @@
-# CS2 Induced Error-Recovery Trace (Reviewer point B3)
+# CS2 Induced Error-Recovery Trace
+
+> This is the original single-fault recovery experiment. The error-recovery experiment
+> reported in Section 3.6.3 of the revised paper (a hard-coded script and the agent run
+> head-to-head on three fault scenarios) is in [`../robustness/`](../robustness/).
 
 Demonstrates the agent **diagnosing a tool failure and recovering** — the
 adaptive behavior claimed in §2.1 but not previously shown in a trace.
