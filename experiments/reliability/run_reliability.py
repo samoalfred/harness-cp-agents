@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-run_reliability.py  --  Reviewer point #2 reliability study (B2).
+run_reliability.py  --  agent run-to-run reliability study.
 
 Measures run-to-run reliability of the agent's autonomous behavior for each of
 the three case studies, using each case's GENUINE deployed harness:
@@ -240,7 +240,7 @@ def run_once(client, model, system_prompt, query, schemas, canned):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Agent reliability over repeated runs (B2).")
+    ap = argparse.ArgumentParser(description="Agent reliability over repeated runs.")
     ap.add_argument("--case", choices=list(CASES.keys()), required=True)
     ap.add_argument("--n", type=int, default=20)
     ap.add_argument("--model", type=str, default=os.environ.get("RELIABILITY_MODEL", "gpt-4o"))

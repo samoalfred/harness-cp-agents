@@ -1,6 +1,6 @@
-# Experiment 2 - CS3 realization ensemble (Revision R1)
+# Experiment 2 - CS3 realization ensemble
 
-Answers Reviewer R8. This folder is a **full copy** of `CS3_Inverse_Problem`; the original
+This folder is a **full copy** of `CS3_Inverse_Problem`; the original
 is never touched. All new experiment code and outputs live here.
 
 Claim: under the DIGITIZED Fig. 2c target the diffuse-[110]-vs-random separation lies

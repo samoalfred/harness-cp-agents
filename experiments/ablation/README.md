@@ -1,4 +1,4 @@
-# CS2 Tool-Description Ablation (Reviewer point B1)
+# CS2 Tool-Description Ablation
 
 Tests whether the agent recovers the correct CS2 execution order from the
 **prerequisite information in the tool descriptions**, by removing that

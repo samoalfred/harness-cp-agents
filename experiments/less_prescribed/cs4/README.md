@@ -1,6 +1,6 @@
-# Experiment 1c - CS4 autonomous chaining (Revision R1)
+# Experiment 1c - CS4 autonomous chaining
 
-Answers Reviewer R4 for the multi-pass case. Given only the goal (and the fact that the
+The multi-pass case of the less-prescribed test. Given only the goal (and the fact that the
 reference applies five passes), does the agent infer the chained workflow on its own:
 call `run_pass` sequentially 1..5, carry deformed orientations forward (the tool does this
 automatically), place the pass-1 mechanical comparison after pass 1, and the texture

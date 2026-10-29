@@ -1,9 +1,9 @@
 #!/usr/bin/env python3.7
 # -*- coding: utf-8 -*-
 """
-run_ensemble.py  --  Experiment 2 (Revision R1): CS3 realization ensemble.
+run_ensemble.py  --  Experiment 2: CS3 realization ensemble.
 
-Answers Reviewer R8: the diffuse-[110]-vs-random separation under the DIGITIZED target
+Tests whether the diffuse-[110]-vs-random separation under the DIGITIZED target
 lies within realization noise, and under a SELF-CONSISTENT (same-kernel) target the
 random mode is recovered.
 
