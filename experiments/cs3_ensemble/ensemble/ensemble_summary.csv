@@ -1,0 +1,6 @@
+seed,random_loss_dig,best110_loss_dig,gap_dig,random_loss_sc,best110_loss_sc,argmin_mode_sc,random_is_optimum_sc
+0,0.5679,0.2622,0.3057,0.0395,0.0015,f110,False
+1,0.7845,0.2423,0.5422,0.0041,0.0022,f110,False
+2,0.6706,0.2941,0.3765,0.0088,0.1182,random,True
+3,0.8497,0.3026,0.5471,0.0066,0.0834,random,True
+4,1.184,0.4022,0.7818,0.0608,0.0084,f110,False
