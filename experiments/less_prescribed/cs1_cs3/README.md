@@ -1,7 +1,7 @@
 # Experiment 1 (1a + 1b) - less-prescribed autonomy
 
-Tests whether the tasks are over-prescribed: given ONLY the goal, the agent chooses
-the decision the query previously stated for it. **Dry-run: no CP-FEM is launched** (each
+Supplementary test of agent autonomy: the query states only the goal, and the agent
+makes a workflow decision on its own (which optimizer, strategy or budget to use). **Dry-run: no CP-FEM is launched** (each
 tool returns a canned SUCCESS; we log only the decision and the agent's rationale).
 
 1c (CS4 chaining) lives separately, in `hcp/R1_Exp1c_CS4_Chaining/`, because CS4 is HCP.

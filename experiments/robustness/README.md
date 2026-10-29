@@ -1,7 +1,7 @@
 # Experiment 3 - scripted-vs-agent robustness
 
-Tests the distinction from scripted automation under more demanding robustness
-scenarios. **Dry-run: no CP-FEM is launched.** It imports the GENUINE CS2
+Supplementary experiment comparing the agent with a fixed, hard-coded script when
+faults are injected into the CS2 workflow. **Dry-run: no CP-FEM is launched.** It imports the GENUINE CS2
 harness (`SYSTEM_PROMPT`, `TOOL_SCHEMAS` from `../CS2_Texture_Evolution`) and injects
 one controlled fault per scenario, running BOTH a fixed hard-coded script and the agent.
 
