@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-run_ablation.py  --  Reviewer point #1 ablation (B1).
+run_ablation.py  --  CS2 tool-description ablation.
 
 Question: does the agent recover the correct CS2 execution order from the
 PREREQUISITE information in the tool descriptions, or from elsewhere?
@@ -197,7 +197,7 @@ def run_condition(client, model, schemas, label, n, logf):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="CS2 tool-description ablation (B1).")
+    ap = argparse.ArgumentParser(description="CS2 tool-description ablation.")
     ap.add_argument("--n", type=int, default=20, help="repetitions per condition")
     ap.add_argument("--condition", choices=["full", "ablated", "both"], default="both")
     ap.add_argument("--model", type=str, default=os.environ.get("ABLATION_MODEL", "gpt-4o"))
@@ -217,7 +217,7 @@ def main():
     log_path = os.path.join(here, "ablation_log_%s.txt" % stamp)
     results = []
     with open(log_path, "w") as logf:
-        logf.write("CS2 tool-description ablation (B1)\nmodel=%s  n=%d  time=%s\n"
+        logf.write("CS2 tool-description ablation\nmodel=%s  n=%d  time=%s\n"
                    % (args.model, args.n, stamp))
         if args.condition in ("full", "both"):
             results.append(run_condition(client, args.model, FULL, "FULL", args.n, logf))

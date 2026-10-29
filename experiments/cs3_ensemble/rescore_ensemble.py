@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.7
 # -*- coding: utf-8 -*-
 """
-rescore_ensemble.py  --  Experiment 2 (Revision R1), Phase 2: re-scoring (zero sims).
+rescore_ensemble.py  --  Experiment 2, Phase 2: re-scoring (zero sims).
 
 Reads each realization's inverse_log.csv (ensemble/log_seed*.csv) and, per realization,
 reports under the DIGITIZED target (fig2c_targets.json):

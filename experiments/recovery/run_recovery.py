@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-run_recovery.py  --  Reviewer point #5 induced error-recovery trace (B3).
+run_recovery.py  --  CS2 induced error-recovery trace.
 
 Demonstrates the agent DIAGNOSING a tool failure and RECOVERING, using the
 GENUINE CS2 harness (real system prompt + real full tool schemas imported from
@@ -195,7 +195,7 @@ def format_trace(trace, scenario, failure_hit, recovered, terminated):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="CS2 induced error-recovery (B3).")
+    ap = argparse.ArgumentParser(description="CS2 induced error-recovery.")
     ap.add_argument("--scenario", choices=["transient", "needs_convert", "missing_ref"],
                     default="transient")
     ap.add_argument("--n", type=int, default=5, help="episodes (for recovery rate)")

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-run_exp1.py  --  Experiment 1 (Revision R1): less-prescribed autonomy, sub-tests 1a and 1b.
+run_exp1.py  --  Experiment 1: less-prescribed autonomy, sub-tests 1a and 1b.
 
-Answers Reviewer R4 ("tasks are too prescribed"): given ONLY the goal, the agent
+Tests whether the tasks are over-prescribed: given ONLY the goal, the agent
 chooses the decision the query previously stated for it.
 
   1a  CS1 calibration -- the optimizer is NOT named in the query.
@@ -18,7 +18,7 @@ imported live from the deployed case folders) in a stateful DRY RUN: every tool 
 returns a canned SUCCESS so the agent walks the workflow in seconds; no CP-FEM is
 launched. We log only the decision of interest and the agent's rationale.
 
-NEUTRALIZED HINTS (Revision R1, disclosed):
+NEUTRALIZED HINTS (disclosed):
   The deployed system prompts contain an explicit *default* directive that tells the
   agent which optimizer/strategy to use when the query is silent ("...or does not
   specify" in CS1; "Use this unless the user explicitly asks for a naive baseline" in

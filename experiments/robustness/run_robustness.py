@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-run_robustness.py  --  Experiment 3 (Revision R1): scripted-vs-agent robustness.
+run_robustness.py  --  Experiment 3: scripted-vs-agent robustness.
 
 Head-to-head demonstration that a FIXED, hard-coded script fails (silently or by
 halting) under perturbation, while the harness-engineered agent diagnoses and

@@ -1,6 +1,6 @@
-# Experiment 1 (1a + 1b) - less-prescribed autonomy (Revision R1)
+# Experiment 1 (1a + 1b) - less-prescribed autonomy
 
-Answers Reviewer R4 ("tasks are too prescribed"): given ONLY the goal, the agent chooses
+Tests whether the tasks are over-prescribed: given ONLY the goal, the agent chooses
 the decision the query previously stated for it. **Dry-run: no CP-FEM is launched** (each
 tool returns a canned SUCCESS; we log only the decision and the agent's rationale).
 

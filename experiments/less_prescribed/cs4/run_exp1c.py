@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-run_exp1c.py  --  Experiment 1c (Revision R1): less-prescribed autonomy, CS4 chaining.
+run_exp1c.py  --  Experiment 1c: less-prescribed autonomy, CS4 chaining.
 
-Answers Reviewer R4 ("tasks are too prescribed") for the multi-pass case: given only
+Tests whether the tasks are over-prescribed, for the multi-pass case: given only
 the goal (and the fact that the reference applies five passes), does the agent infer
 the chained workflow on its own -- call run_pass sequentially 1..5, carry the deformed
 orientations forward (the tool does this automatically), place the pass-1 mechanical
