@@ -1,7 +1,8 @@
 # Experiment 2 - CS3 realization ensemble
 
-This folder is a **full copy** of `CS3_Inverse_Problem`; the original
-is never touched. All new experiment code and outputs live here.
+Supplementary experiment repeating the CS3 inverse search over five random microstructure
+realizations. This folder is a **full copy** of the CS3 harness (the original is not
+modified); all experiment-specific code and outputs live here.
 
 Claim: under the DIGITIZED Fig. 2c target the diffuse-[110]-vs-random separation lies
 within realization noise, and under a SELF-CONSISTENT (same-kernel) target the random mode

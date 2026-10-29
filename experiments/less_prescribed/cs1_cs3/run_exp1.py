@@ -2,8 +2,8 @@
 """
 run_exp1.py  --  Experiment 1: less-prescribed autonomy, sub-tests 1a and 1b.
 
-Tests whether the tasks are over-prescribed: given ONLY the goal, the agent
-chooses the decision the query previously stated for it.
+Supplementary test of agent autonomy: the query states only the goal, and the
+agent makes a workflow decision on its own.
 
   1a  CS1 calibration -- the optimizer is NOT named in the query.
       Measures which optimizer the agent selects and its stated rationale.
