@@ -1,0 +1,34 @@
+{
+  "source": "Yaghoobi et al. (2022), PRISMS-Plasticity TM, Fig. 2c (Application 1): deformed pole figures of OFHC copper after uniaxial compression to true strain ~1.0 (Taylor, rate-dependent). Initial texture is RANDOM.",
+  "reference_image": "Reference_Plot_figures.png",
+  "digitized_by": "colorbar/pixel mapping of the rendered figure (12 deg central cap, equal-area/Schmidt projection); values approximate (+/- ~0.2 MRD)",
+  "scale_MRD_max": 3.5,
+  "kernel_halfwidth_deg": 8.0,
+  "central_cap_deg": 12.0,
+  "pole_figures": {
+    "111": {
+      "peak_MRD": 2.5,
+      "central_MRD": 0.3,
+      "central": "minimum",
+      "pattern": "ring of intensity at intermediate radius; depleted centre"
+    },
+    "100": {
+      "peak_MRD": 2.35,
+      "central_MRD": 0.3,
+      "central": "minimum",
+      "pattern": "ring at intermediate radius; depleted centre"
+    },
+    "110": {
+      "peak_MRD": 3.5,
+      "central_MRD": 3.3,
+      "central": "maximum",
+      "pattern": "strong central maximum = <110> compression fibre aligned with the load axis Z; the primary target feature"
+    }
+  },
+  "weights": {"111": 1.0, "100": 1.0, "110": 2.0},
+  "match_priority": [
+    "1. {110} central maximum ~3.3 MRD (the <110> compression fibre)",
+    "2. {100} and {111} central minima with mid-radius rings, peaks ~2.3-2.5",
+    "3. overall strong compression fibre (0 to 3.5 MRD scale)"
+  ]
+}

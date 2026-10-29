@@ -1,0 +1,4 @@
+Equal-grain RVE (paper Application 1, Yaghoobi et al. 2022)
+Grid: 5 x 8 x 10 = 400 voxels = 400 grains (one grain per voxel, equal sizes)
+Orientation type: textured
+Done!

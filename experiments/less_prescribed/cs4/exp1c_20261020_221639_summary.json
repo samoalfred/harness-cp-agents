@@ -1,0 +1,86 @@
+{
+  "n": 5,
+  "model": "gpt-4o",
+  "results": [
+    {
+      "pass_sequence": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "ordered_1to5": true,
+      "n_passes": 5,
+      "compared_after_pass1": true,
+      "analysed_after_pass5": true,
+      "did_compare_stress_strain": true,
+      "did_analyze_texture": true,
+      "did_compare_final": true
+    },
+    {
+      "pass_sequence": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "ordered_1to5": true,
+      "n_passes": 5,
+      "compared_after_pass1": true,
+      "analysed_after_pass5": true,
+      "did_compare_stress_strain": true,
+      "did_analyze_texture": true,
+      "did_compare_final": true
+    },
+    {
+      "pass_sequence": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "ordered_1to5": true,
+      "n_passes": 5,
+      "compared_after_pass1": true,
+      "analysed_after_pass5": true,
+      "did_compare_stress_strain": true,
+      "did_analyze_texture": true,
+      "did_compare_final": true
+    },
+    {
+      "pass_sequence": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "ordered_1to5": true,
+      "n_passes": 5,
+      "compared_after_pass1": true,
+      "analysed_after_pass5": true,
+      "did_compare_stress_strain": true,
+      "did_analyze_texture": true,
+      "did_compare_final": true
+    },
+    {
+      "pass_sequence": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "ordered_1to5": true,
+      "n_passes": 5,
+      "compared_after_pass1": true,
+      "analysed_after_pass5": true,
+      "did_compare_stress_strain": true,
+      "did_analyze_texture": true,
+      "did_compare_final": true
+    }
+  ]
+}
