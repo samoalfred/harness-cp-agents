@@ -1,0 +1,1 @@
+Recover the initial crystallographic texture of the copper polycrystal that, after uniaxial compression along Z to true strain ~1.0, reproduces the target in fig2c_targets.json. Simulations are expensive, so use them economically. Then interpret the recovered initial texture.
